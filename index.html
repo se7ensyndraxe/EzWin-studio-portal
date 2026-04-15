@@ -27,7 +27,7 @@
         #enter-overlay h2 { font-size: 11px; letter-spacing: 12px; color: rgba(255, 255, 255, 0.4); text-transform: uppercase; animation: neonLoader 2s infinite; }
         @keyframes neonLoader { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
 
-        /* SES PANELİ (GERİ GELDİ) */
+        /* SES PANELİ */
         .music-panel {
             position: absolute; top: 30px; left: 30px; z-index: 500;
             background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(20px);
@@ -47,7 +47,8 @@
             z-index: -1;
         }
 
-        .container { text-align: center; z-index: 10; width: 100%; max-width: 650px; padding: 40px 20px; }
+        /* 3 SÜTUN İÇİN GENİŞLETİLMİŞ CONTAINER */
+        .container { text-align: center; z-index: 10; width: 100%; max-width: 950px; padding: 40px 20px; }
 
         @keyframes dropBounce { 0% { transform: translateY(-50px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
         .anim-wrap { opacity: 0; }
@@ -63,25 +64,37 @@
         }
 
         .designer-tag, .founder-tag, .powered-tag { font-size: 9px; color: rgba(255,255,255,0.3); letter-spacing: 4px; text-transform: uppercase; }
-        .designer-tag { margin-bottom: 35px; }
-        .founder-tag { margin-top: 25px; }
+        .designer-tag { margin-bottom: 45px; }
+        .founder-tag { margin-top: 35px; }
         .powered-tag { position: fixed; bottom: 30px; right: 30px; letter-spacing: 2px; opacity: 0.5; }
 
-        /* YENİ SİMETRİK İKİLİ YAPI (4v4) */
-        .split-layout { display: flex; gap: 15px; width: 100%; }
-        .col { display: flex; flex-direction: column; gap: 12px; flex: 1; }
+        /* YENİ 3 SÜTUNLU YAPI (Sol - Orta - Sağ) */
+        .three-col-layout {
+            display: flex;
+            justify-content: center;
+            align-items: center; /* Yan sütunları ortaya dikey olarak hizalar */
+            gap: 20px;
+            width: 100%;
+        }
+        .side-col { display: flex; flex-direction: column; gap: 15px; flex: 1; }
+        .center-col { display: flex; flex-direction: column; gap: 15px; flex: 1.2; }
+
+        /* Mobil Cihazlar İçin Uyum */
+        @media (max-width: 850px) {
+            .three-col-layout { flex-direction: column; }
+        }
 
         /* BUTON STANDARTLARI */
         .ios-btn, .join-btn {
-            height: 55px; /* Tüm butonlar aynı boyda olsun diye sabitlendi */
+            height: 55px;
             border-radius: 14px; text-decoration: none; transition: 0.3s;
-            font-size: 12px; font-weight: 800; letter-spacing: 0.5px;
+            font-size: 11px; font-weight: 800; letter-spacing: 0.5px;
         }
 
         .ios-btn {
             display: flex; align-items: center; padding: 0 15px;
             background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(10px); color: white;
+            backdrop-filter: blur(10px); color: white; font-size: 12px;
         }
         .ios-btn:hover { background: rgba(255, 255, 255, 0.08); transform: translateY(-3px); border-color: rgba(255,255,255,0.2); }
         .icon-box { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; background: rgba(255,255,255,0.05); margin-right: 12px; }
@@ -90,8 +103,12 @@
         .join-btn {
             display: flex; align-items: center; justify-content: center;
             background: #fff; color: #000; text-transform: uppercase; border: none; cursor: pointer;
+            padding: 0 10px; text-align: center;
         }
         .join-btn:hover { transform: scale(1.03); box-shadow: 0 10px 20px rgba(255,255,255,0.15); }
+        
+        /* Merkezdeki Ana Discord Butonu İçin Özel Vurgu */
+        .main-join { font-size: 13px; background: #fff; color: #000; }
 
         #video-container { position: absolute; left: -9999px; }
     </style>
@@ -118,9 +135,14 @@
             <div class="designer-tag">DESİGNED BY 𝐋𝐃✦ 𝐒𝐄𝟕𝐄𝐍𝐒𝐘𝐍𝐃𝐑𝐀𝐗𝐄</div>
         </div>
 
-        <div class="split-layout">
+        <div class="three-col-layout">
             
-            <div class="col anim-wrap" style="animation-delay: 0.2s;">
+            <div class="side-col anim-wrap" style="animation-delay: 0.3s;">
+                <a href="https://discord.gg/CnapcSfNq5" target="_blank" class="join-btn">JOIN THE EzWin Music</a>
+                <a href="https://discord.gg/G7s3kgtSJX" target="_blank" class="join-btn">EzWin Hesap Hizmetleri</a>
+            </div>
+
+            <div class="center-col anim-wrap" style="animation-delay: 0.2s;">
                 <a href="https://www.youtube.com/@EzW%C4%B1nStud%C4%B1o" target="_blank" class="ios-btn">
                     <div class="icon-box"><i class="fa-brands fa-youtube yt-red"></i></div>
                     <div><b>EzWın Studıo</b></div>
@@ -133,12 +155,10 @@
                     <div class="icon-box"><i class="fa-brands fa-youtube yt-red"></i></div>
                     <div><b>EzWın YaSen</b></div>
                 </a>
-                <a href="https://discord.gg/xDydNyHnUd" target="_blank" class="join-btn">JOIN THE EzWın Studıo</a>
+                <a href="https://discord.gg/xDydNyHnUd" target="_blank" class="join-btn main-join">JOIN THE EzWın Studıo</a>
             </div>
 
-            <div class="col anim-wrap" style="animation-delay: 0.4s;">
-                <a href="https://discord.gg/CnapcSfNq5" target="_blank" class="join-btn">JOIN THE EzWin Music</a>
-                <a href="https://discord.gg/G7s3kgtSJX" target="_blank" class="join-btn">EzWin Hesap Hizmetleri #Roblox</a>
+            <div class="side-col anim-wrap" style="animation-delay: 0.4s;">
                 <a href="https://discord.gg/jwtmt46ZPb" target="_blank" class="join-btn">JOIN THE EzWın UncopyLocked</a>
                 <a href="https://discord.gg/m2uDdfUEdf" target="_blank" class="join-btn">JOIN THE EzWin Cheat</a>
             </div>
@@ -188,14 +208,14 @@
             });
         }
 
-        // Click to Enter (Hata Çözüldü)
+        // Click to Enter 
         function startExperience() { 
             document.getElementById('enter-overlay').classList.add('hide'); 
             document.body.classList.add('loaded'); 
             if(player && typeof player.playVideo === 'function') player.playVideo(); 
         }
 
-        // Ses Ayarı (Hata Çözüldü - Null Check Eklendi)
+        // Ses Ayarı
         const volSlider = document.getElementById('vol-slider');
         if(volSlider) {
             volSlider.addEventListener('input', (e) => { 
