@@ -16,38 +16,42 @@
             min-height: 100vh; overflow: hidden; position: relative;
         }
 
-        /* --- ARKA PLAN SİSTEMİ (GEOMETRİK) --- */
+        /* --- ARKA PLAN (PS SEMBOLLERİ) --- */
         #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
 
-        /* --- FLASHBANG & GİRİŞ --- */
-        #flash-bang { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 11000; opacity: 0; pointer-events: none; }
-        #enter-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0c0c0c; z-index: 10000; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+        /* --- FLASHBANG & OVERLAY --- */
+        #flash-bang { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 50000; opacity: 0; pointer-events: none; }
+        #enter-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0c0c0c; z-index: 60000; display: flex; justify-content: center; align-items: center; cursor: pointer; }
         #enter-overlay h2 { font-size: 12px; letter-spacing: 12px; color: #fff; animation: glowPulse 2s infinite; }
         @keyframes glowPulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-        /* --- FİZİKSEL DÜŞME (BOUNCE) --- */
+        /* --- FİZİKSEL DÜŞME (SABİT KONUMLU) --- */
         @keyframes dropBounce {
-            0% { transform: translateY(-1000px); opacity: 0; }
-            60% { transform: translateY(30px); opacity: 1; }
-            80% { transform: translateY(-15px); }
+            0% { transform: translateY(-1200px); opacity: 0; }
+            65% { transform: translateY(25px); opacity: 1; }
+            85% { transform: translateY(-10px); }
             100% { transform: translateY(0); }
         }
-        .falling { opacity: 0; }
-        body.loaded .falling { animation: dropBounce 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
 
-        /* --- ORİJİNAL HUD BİLDİRİMLERİ --- */
+        .falling { opacity: 0; }
+        body.loaded .falling { 
+            animation: dropBounce 1.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
+            opacity: 1; 
+        }
+
+        /* --- HUD --- */
         #audio-hud {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
             background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px);
             padding: 30px 50px; border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.2);
-            z-index: 9000; display: flex; flex-direction: column; align-items: center; gap: 15px;
+            z-index: 10000; display: flex; flex-direction: column; align-items: center; gap: 15px;
             opacity: 0; pointer-events: none; transition: 0.4s;
         }
         #audio-hud.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 
-        /* --- ORİJİNAL MÜZİK PANELİ --- */
+        /* --- MÜZİK PANELİ --- */
+        .music-panel-wrapper { position: absolute; top: 30px; left: 30px; z-index: 8000; }
         .music-panel {
-            position: absolute; top: 30px; left: 30px; z-index: 8000;
             background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px);
             padding: 12px 22px; border-radius: 50px; border: 1px solid rgba(255, 255, 255, 0.1);
             display: flex; align-items: center; gap: 18px;
@@ -57,18 +61,18 @@
         .vol-slider { width: 60px; height: 3px; -webkit-appearance: none; background: rgba(255,255,255,0.1); border-radius: 5px; }
         .vol-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; background: #fff; border-radius: 50%; cursor: pointer; }
 
-        /* --- ORİJİNAL PLAYLIST --- */
+        /* --- PLAYLIST --- */
         #playlist-menu {
             position: absolute; top: 85px; left: 30px; width: 320px;
             background: rgba(12, 12, 12, 0.98); border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.1);
             padding: 15px; display: none; flex-direction: column; gap: 8px; z-index: 8001;
         }
-        #playlist-menu.active { display: flex; animation: fadeIn 0.3s forwards; }
+        #playlist-menu.active { display: flex; }
         .playlist-item { padding: 12px; border-radius: 8px; font-size: 10px; cursor: pointer; color: rgba(255,255,255,0.4); display: flex; justify-content: space-between; }
         .playlist-item.playing { background: #fff; color: #000; font-weight: 800; }
 
-        /* --- ANA TASARIM (ORİJİNAL) --- */
-        .container { text-align: center; z-index: 100; width: 100%; max-width: 950px; padding: 20px; }
+        /* --- KONTEYNER VE BUTONLAR --- */
+        .container { text-align: center; z-index: 100; width: 100%; max-width: 950px; padding: 20px; position: relative; }
         h1.studio-title { font-size: 48px; font-weight: 900; letter-spacing: -1px; margin-bottom: 5px; color: #fff; }
         .designer-tag { font-size: 9px; color: rgba(255,255,255,0.4); letter-spacing: 5px; margin-bottom: 50px; }
 
@@ -102,21 +106,22 @@
         <span id="hud-text">SES ACIK</span>
     </div>
 
-    <div class="music-panel falling" style="animation-delay: 0.8s;">
-        <i id="menu-btn" class="fa-solid fa-bars" onclick="togglePlaylist()"></i>
-        <i class="fa-solid fa-backward-step nav-btn" onclick="prevTrack()"></i>
-        <div id="mute-btn" onclick="toggleMute()">
-            <i id="panel-icon" class="fa-solid fa-volume-high"></i>
+    <div class="music-panel-wrapper falling" style="animation-delay: 0.8s;">
+        <div class="music-panel">
+            <i id="menu-btn" class="fa-solid fa-bars" onclick="togglePlaylist()"></i>
+            <i class="fa-solid fa-backward-step nav-btn" onclick="prevTrack()"></i>
+            <div id="mute-btn" onclick="toggleMute()">
+                <i id="panel-icon" class="fa-solid fa-volume-high"></i>
+            </div>
+            <i class="fa-solid fa-forward-step nav-btn" onclick="nextTrack()"></i>
+            <input type="range" class="vol-slider" id="vol-slider" min="0" max="100" value="30">
         </div>
-        <i class="fa-solid fa-forward-step nav-btn" onclick="nextTrack()"></i>
-        <input type="range" class="vol-slider" id="vol-slider" min="0" max="100" value="30">
-    </div>
-
-    <div id="playlist-menu">
-        <div class="playlist-item playing" data-index="0" onclick="selectTrack(0)"><span>LAST CHRISTMAS</span> <i class="fa-solid fa-music"></i></div>
-        <div class="playlist-item" data-index="1" onclick="selectTrack(1)"><span>VAR VAR</span> <i class="fa-solid fa-music"></i></div>
-        <div class="playlist-item" data-index="2" onclick="selectTrack(2)"><span>RASPUTIN</span> <i class="fa-solid fa-music"></i></div>
-        <div class="playlist-item" data-index="3" onclick="selectTrack(3)"><span>JUST THE TWO OF US</span> <i class="fa-solid fa-music"></i></div>
+        <div id="playlist-menu">
+            <div class="playlist-item playing" data-index="0" onclick="selectTrack(0)"><span>LAST CHRISTMAS</span> <i class="fa-solid fa-music"></i></div>
+            <div class="playlist-item" data-index="1" onclick="selectTrack(1)"><span>VAR VAR</span> <i class="fa-solid fa-music"></i></div>
+            <div class="playlist-item" data-index="2" onclick="selectTrack(2)"><span>RASPUTIN</span> <i class="fa-solid fa-music"></i></div>
+            <div class="playlist-item" data-index="3" onclick="selectTrack(3)"><span>JUST THE TWO OF US</span> <i class="fa-solid fa-music"></i></div>
+        </div>
     </div>
 
     <div id="video-container"><div id="player"></div></div>
@@ -143,7 +148,8 @@
                 <a href="https://discord.gg/m2uDdfUEdf" target="_blank" class="base-btn white-btn falling" style="animation-delay: 0.7s;">JOIN THE EZWIN CHEAT</a>
             </div>
         </div>
-        <div class="falling" style="animation-delay: 0.8s;">
+        
+        <div class="falling" style="animation-delay: 0.9s;">
             <div style="font-size: 9px; color: rgba(255,255,255,0.2); letter-spacing: 4px; margin-top: 40px;">FOUNDER: EZWINYASEN</div>
         </div>
     </div>
