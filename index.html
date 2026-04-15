@@ -68,32 +68,22 @@
 
     <script>
         (function() {
-            // 1. IP Kontrolü (Sadece Türkiye - Hata durumunda siteyi kapatmaz)
-            fetch('https://ipapi.co/json/')
-                .then(res => res.json())
-                .then(data => {
-                    if (data.country_code && data.country_code !== 'TR') {
-                        window.location.href = "https://www.google.com.tr";
-                    }
-                })
-                .catch(err => console.log("Security Check Passed Locally"));
-
-            // 2. Konsol Logosu (Senin istediğin o özel yazı)
+            // 1. KONSOL UYARISI (Herkes görebilir, kimseyi engellemez)
             setInterval(() => {
                 console.clear();
                 console.log("%cSE7ENSYNDRAXE SECURİTY SYSTEM", "color: white; background: black; font-size: 25px; font-weight: bold; font-family: monospace;");
                 console.log("%cBLOCKED YOUR PERMİSSİON - LD✦", "color: red; font-size: 16px; font-weight: bold; font-family: monospace;");
             }, 1000);
 
-            // 3. Klavye Engelleri (F12 ve Kaynak Kodu)
+            // 2. TEMEL ENGELLEYİCİLER (Klavye Kısayolları)
             document.onkeydown = function(e) {
                 if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && e.keyCode == 73) || (e.ctrlKey && e.keyCode == 85)) {
                     return false;
                 }
             };
-
-            // 4. Anti-Debugger (Kurcalayanın sekmesini dondurur)
-            setInterval(() => { debugger; }, 500);
+            
+            // 3. ANTI-DEBUGGER (Kurcalayanlar için pasif uyarı)
+            setInterval(() => { debugger; }, 1000);
         })();
     </script>
 
@@ -147,7 +137,6 @@
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        // Arka Plan Animasyonu
         const canvas = document.getElementById('bg-canvas'); const ctx = canvas.getContext('2d'); let shapes = [];
         const textPool = ["EZ", "WIN", "LD✦", "404"];
         
@@ -166,7 +155,6 @@
         }
         initBG(); drawBG();
 
-        // Müzik Kontrolleri
         let player, currentTrackIndex = 0;
         const tracks = [{id:"KhqNTjbQ71A"}, {id:"eCRG6UAsDgc"}, {id:"x5Oag4hISgU"}, {id:"gelwwYuYGn0"}];
         function onYouTubeIframeAPIReady() { player = new YT.Player('player', { height: '1', width: '1', videoId: tracks[0].id, playerVars: {'autoplay':0, 'controls':0}, events: {'onReady': e => e.target.setVolume(30)} }); }
