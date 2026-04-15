@@ -125,7 +125,10 @@
         .yt-btn { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); justify-content: flex-start; padding-left: 20px; backdrop-filter: blur(5px); }
         .yt-btn:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.5); transform: translateY(-7px); }
         .yt-btn i { color: #ff0000; margin-right: 15px; font-size: 18px; }
+        
+        /* ÖZEL ANA BUTON VE HOVER DÜZELTMESİ */
         .special-main-btn { background: #111 !important; color: #fff !important; height: 65px; border: 1px solid #fff !important; animation: mainPulse 2s infinite; }
+        .special-main-btn:hover { transform: translateY(-7px) scale(1.02); box-shadow: 0 0 35px rgba(255,255,255,0.5); border-color: #fff; }
 
         @keyframes mainPulse { 0%, 100% { box-shadow: 0 0 5px rgba(255,255,255,0.2); } 50% { box-shadow: 0 0 25px rgba(255,255,255,0.4); } }
         .powered-by { position: fixed; bottom: 30px; right: 30px; font-size: 9px; font-weight: 900; letter-spacing: 3px; z-index: 5000; }
@@ -270,12 +273,12 @@
 
         function toggleMute() {
             if (!player) return;
-            if (player.isMuted()) { player.unMute(); document.getElementById('panel-icon').className = "fa-solid fa-volume-high"; }
-            else { player.mute(); document.getElementById('panel-icon').className = "fa-solid fa-volume-xmark"; }
+            if (player.isMuted()) { player.unMute(); document.getElementById('panel-icon').className = "fa-solid fa-volume-high"; showHUD("SES ACIK", "fa-volume-high"); }
+            else { player.mute(); document.getElementById('panel-icon').className = "fa-solid fa-volume-xmark"; showHUD("SES KAPALI", "fa-volume-xmark"); }
         }
 
-        function nextTrack() { currentTrackIndex = (currentTrackIndex + 1) % tracks.length; selectTrack(currentTrackIndex); togglePlaylist(); }
-        function prevTrack() { currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length; selectTrack(currentTrackIndex); togglePlaylist(); }
+        function nextTrack() { currentTrackIndex = (currentTrackIndex + 1) % tracks.length; selectTrack(currentTrackIndex); }
+        function prevTrack() { currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length; selectTrack(currentTrackIndex); }
 
         document.getElementById('vol-slider').addEventListener('input', (e) => { if(player) player.setVolume(e.target.value); });
     </script>
