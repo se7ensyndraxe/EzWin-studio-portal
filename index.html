@@ -16,29 +16,47 @@
             min-height: 100vh; overflow: hidden; position: relative;
         }
 
-        /* GIRIS EKRANI */
+        /* FLASHBANG KATMANI */
+        #flash-bang {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff; z-index: 11000; opacity: 0; pointer-events: none;
+        }
+
+        /* GİRİŞ EKRANI */
         #enter-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 10000; display: flex; 
             justify-content: center; align-items: center; cursor: pointer;
-            transition: opacity 0.8s ease, visibility 0.8s;
+            transition: opacity 0.5s ease;
         }
-        #enter-overlay.hide { opacity: 0; visibility: hidden; pointer-events: none; }
         #enter-overlay h2 { font-size: 12px; letter-spacing: 12px; color: #fff; animation: glowPulse 2s infinite; }
         @keyframes glowPulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; text-shadow: 0 0 15px #fff; } }
 
-        /* MERKEZ SES VE MUZIK BILDIRIMI (HUD) */
+        /* GRADYAN ANIMASYONU */
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .animated-gradient {
+            background: linear-gradient(90deg, #444, #fff, #444);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientMove 3s linear infinite;
+        }
+
+        /* MERKEZ HUD */
         #audio-hud {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
             background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(15px);
             padding: 30px 50px; border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.2);
             z-index: 9000; display: flex; flex-direction: column; align-items: center; gap: 15px;
             opacity: 0; pointer-events: none; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            min-width: 300px;
         }
         #audio-hud.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        #audio-hud i { font-size: 50px; text-shadow: 0 0 20px rgba(255,255,255,0.5); }
-        #audio-hud span { font-size: 14px; font-weight: 800; letter-spacing: 2px; text-align: center; }
+        #audio-hud span { font-size: 14px; font-weight: 800; letter-spacing: 2px; }
 
         /* MUZIK PANELI */
         .music-panel {
@@ -49,75 +67,42 @@
             opacity: 0; transform: translateX(-30px); transition: 1s ease 0.5s;
         }
         body.loaded .music-panel { opacity: 1; transform: translateX(0); }
-        
-        .nav-btn { cursor: pointer; color: rgba(255,255,255,0.6); transition: 0.2s; font-size: 14px; }
-        .nav-btn:hover { color: #fff; transform: scale(1.2); }
-
-        #mute-btn { cursor: pointer; width: 20px; display: flex; justify-content: center; transition: 0.2s; }
-        #mute-btn:hover { transform: scale(1.2); }
-
+        .nav-btn, #mute-btn { cursor: pointer; transition: 0.2s; }
+        .nav-btn:hover, #mute-btn:hover { transform: scale(1.2); color: #fff; }
         .vol-slider { width: 60px; height: 3px; -webkit-appearance: none; background: rgba(255,255,255,0.1); border-radius: 5px; }
         .vol-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 10px; height: 10px; background: #fff; border-radius: 50%; cursor: pointer; }
 
-        /* ARKA PLAN */
+        /* ANA TASARIM */
         #bg-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
         .container { text-align: center; z-index: 10; width: 100%; max-width: 950px; padding: 20px; position: relative; }
-
-        /* ANIMASYONLAR */
-        .anim-wrap { opacity: 0; transform: translateY(30px); transition: 1s cubic-bezier(0.165, 0.84, 0.44, 1) forwards; }
+        .anim-wrap { opacity: 0; transform: translateY(30px); transition: 1s forwards; }
         body.loaded .anim-wrap { opacity: 1; transform: translateY(0); }
 
-        h1.studio-title { font-size: 48px; font-weight: 900; letter-spacing: -1px; background: linear-gradient(180deg, #fff 0%, #444 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        h1.studio-title { font-size: 48px; font-weight: 900; letter-spacing: -1px; margin-bottom: 5px; }
         .designer-tag { font-size: 9px; color: rgba(255,255,255,0.4); letter-spacing: 5px; margin-bottom: 50px; }
 
         .layout-grid { display: flex; align-items: center; gap: 20px; width: 100%; }
         .side-col { flex: 1; display: flex; flex-direction: column; gap: 15px; }
         .center-col { flex: 1.3; display: flex; flex-direction: column; gap: 15px; }
 
-        @media (max-width: 850px) { .layout-grid { flex-direction: column; } }
-
-        /* BUTONLAR */
-        .base-btn {
-            height: 55px; border-radius: 12px; text-decoration: none; font-weight: 800;
-            display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;
-            font-size: 11px; letter-spacing: 0.5px; border: 1px solid transparent;
-            cursor: pointer; pointer-events: auto;
-        }
-
+        .base-btn { height: 55px; border-radius: 12px; text-decoration: none; font-weight: 800; display: flex; align-items: center; justify-content: center; transition: 0.3s; font-size: 11px; letter-spacing: 0.5px; cursor: pointer; }
         .white-btn { background: #fff; color: #000; }
         .white-btn:hover { transform: translateY(-5px) scale(1.03); box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
-
-        .yt-btn {
-            background: rgba(255,255,255,0.03); color: #fff; border: 1px solid rgba(255,255,255,0.1);
-            justify-content: flex-start; padding-left: 15px; backdrop-filter: blur(10px);
-        }
-        .yt-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.4); transform: translateY(-5px); }
-        .yt-btn i { color: #ff0000; font-size: 18px; margin-right: 12px; }
-
-        .special-main-btn {
-            background: #111 !important; color: #fff !important;
-            height: 65px; border: 1px solid #fff !important;
-            animation: mainPulse 2s infinite ease-in-out;
-            position: relative; z-index: 5;
-        }
-        .special-main-btn:hover {
-            background: #fff !important; color: #000 !important;
-            transform: scale(1.05) translateY(-5px) !important;
-            box-shadow: 0 0 30px rgba(255,255,255,0.6) !important;
-            animation: none;
-        }
-
+        .yt-btn { background: rgba(255,255,255,0.03); color: #fff; border: 1px solid rgba(255,255,255,0.1); justify-content: flex-start; padding-left: 15px; }
+        .yt-btn i { color: #ff0000; margin-right: 12px; font-size: 18px; }
+        .special-main-btn { background: #111 !important; color: #fff !important; height: 65px; border: 1px solid #fff !important; animation: mainPulse 2s infinite; }
         @keyframes mainPulse { 0%, 100% { box-shadow: 0 0 5px rgba(255,255,255,0.2); } 50% { box-shadow: 0 0 20px rgba(255,255,255,0.4); } }
 
-        .founder-tag { font-size: 9px; color: rgba(255,255,255,0.3); letter-spacing: 4px; margin-top: 40px; }
-        .powered-by { position: fixed; bottom: 30px; right: 30px; font-size: 9px; color: #fff; font-weight: 900; letter-spacing: 3px; text-shadow: 0 0 10px rgba(255,255,255,0.8); opacity: 0.9; pointer-events: none; }
+        .powered-by { position: fixed; bottom: 30px; right: 30px; font-size: 9px; font-weight: 900; letter-spacing: 3px; z-index: 500; }
 
         #video-container { position: absolute; left: -9999px; }
     </style>
 </head>
 <body>
 
-    <div id="enter-overlay" onclick="startExperience()">
+    <div id="flash-bang"></div>
+
+    <div id="enter-overlay" onclick="triggerFlash()">
         <h2>CLICK TO ENTER</h2>
     </div>
 
@@ -140,7 +125,7 @@
 
     <div class="container">
         <div class="anim-wrap" style="transition-delay: 0.1s;">
-            <h1 class="studio-title">EZWIN STUDIO</h1>
+            <h1 class="studio-title animated-gradient">EZWIN STUDIO</h1>
             <div class="designer-tag">DESIGNED BY LD✦ SE7ENSYNDRAXE</div>
         </div>
 
@@ -170,47 +155,87 @@
         </div>
 
         <div class="anim-wrap" style="transition-delay: 0.5s;">
-            <div class="founder-tag">FOUNDER: EZWINYASEN</div>
+            <div style="font-size: 9px; color: rgba(255,255,255,0.3); letter-spacing: 4px; margin-top: 40px;">FOUNDER: EZWINYASEN</div>
         </div>
     </div>
 
-    <div class="powered-by">POWERED BY: EZWINSTUDIO</div>
+    <div class="powered-by animated-gradient">POWERED BY: EZWINSTUDIO</div>
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
         let player;
-        let isMuted = false;
         let hudTimeout;
         let currentTrackIndex = 0;
         const tracks = ["KhqNTjbQ71A", "eCRG6UAsDgc", "x5Oag4hISgU", "gelwwYuYGn0"];
 
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
-                height: '1', width: '1',
-                videoId: tracks[currentTrackIndex],
-                playerVars: { 'autoplay': 1, 'loop': 0 },
+                height: '1', width: '1', videoId: tracks[0],
+                playerVars: { 'autoplay': 0, 'loop': 0 },
                 events: { 'onReady': (e) => e.target.setVolume(30) }
             });
+        }
+
+        // --- FLASH & CINLAMA SESI ---
+        function triggerFlash() {
+            const flash = document.getElementById('flash-bang');
+            const overlay = document.getElementById('enter-overlay');
+            
+            // 1. Cinlama Sesini Uret (Web Audio API)
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(4000, audioCtx.currentTime); // Yuksek frekans cinlama
+            
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 2); // 2 saniyede azalarak bitsin
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 2);
+
+            // 2. Gorsel Flash
+            overlay.style.opacity = '0';
+            flash.style.opacity = '1';
+
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                document.body.classList.add('loaded');
+                if(player) player.playVideo(); // Muzik baslasin
+                
+                // Flash yavasca sonsun
+                let opacity = 1;
+                const fade = setInterval(() => {
+                    opacity -= 0.05;
+                    flash.style.opacity = opacity;
+                    if(opacity <= 0) {
+                        clearInterval(fade);
+                        flash.style.display = 'none';
+                    }
+                }, 50);
+            }, 100);
         }
 
         function showHUD(text, iconClass) {
             const hud = document.getElementById('audio-hud');
             const hudIcon = document.getElementById('hud-icon');
             const hudText = document.getElementById('hud-text');
-
             hudIcon.className = "fa-solid " + iconClass;
             hudText.innerText = text;
-            
             hud.classList.add('show');
             clearTimeout(hudTimeout);
-            hudTimeout = setTimeout(() => { hud.classList.remove('show'); }, 1500);
+            hudTimeout = setTimeout(() => hud.classList.remove('show'), 1500);
         }
 
         function toggleMute() {
             if (!player) return;
-            isMuted = !isMuted;
+            const isMuted = player.isMuted();
             const panelIcon = document.getElementById('panel-icon');
-            if (isMuted) {
+            if (!isMuted) {
                 player.mute();
                 panelIcon.className = "fa-solid fa-volume-xmark";
                 showHUD("SES KAPATILDI", "fa-volume-xmark");
@@ -225,34 +250,18 @@
             currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
             player.loadVideoById(tracks[currentTrackIndex]);
             showHUD("BIR SONRAKI MUZIK", "fa-forward-step");
-            if (isMuted) toggleMute(); // Muzik degisince sesi ac
         }
 
         function prevTrack() {
             currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
             player.loadVideoById(tracks[currentTrackIndex]);
             showHUD("BIR ONCEKI MUZIK", "fa-backward-step");
-            if (isMuted) toggleMute();
         }
 
         document.getElementById('vol-slider').addEventListener('input', (e) => {
-            const val = parseInt(e.target.value);
-            if (!player) return;
-            player.setVolume(val);
-            if (val === 0 && !isMuted) { toggleMute(); }
-            else if (val > 0 && isMuted) { toggleMute(); }
+            if(player) player.setVolume(e.target.value);
         });
 
-        function startExperience() {
-            const overlay = document.getElementById('enter-overlay');
-            overlay.classList.add('hide');
-            setTimeout(() => { 
-                document.body.classList.add('loaded');
-                if(player && typeof player.playVideo === 'function') player.playVideo();
-            }, 500);
-        }
-
-        // Canvas Partikuller
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let parts = [];
