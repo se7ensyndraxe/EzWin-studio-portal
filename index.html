@@ -16,7 +16,7 @@
             min-height: 100vh; overflow: hidden; position: relative;
         }
 
-        /* GİRİŞ EKRANI */
+        /* GIRIS EKRANI */
         #enter-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 10000; display: flex; 
@@ -27,37 +27,43 @@
         #enter-overlay h2 { font-size: 12px; letter-spacing: 12px; color: #fff; animation: glowPulse 2s infinite; }
         @keyframes glowPulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; text-shadow: 0 0 15px #fff; } }
 
-        /* MERKEZ SES BİLDİRİMİ (HUD) */
+        /* MERKEZ SES VE MUZIK BILDIRIMI (HUD) */
         #audio-hud {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
             background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(15px);
             padding: 30px 50px; border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.2);
             z-index: 9000; display: flex; flex-direction: column; align-items: center; gap: 15px;
             opacity: 0; pointer-events: none; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            min-width: 300px;
         }
         #audio-hud.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
         #audio-hud i { font-size: 50px; text-shadow: 0 0 20px rgba(255,255,255,0.5); }
-        #audio-hud span { font-size: 14px; font-weight: 800; letter-spacing: 2px; }
+        #audio-hud span { font-size: 14px; font-weight: 800; letter-spacing: 2px; text-align: center; }
 
-        /* MÜZİK PANELİ */
+        /* MUZIK PANELI */
         .music-panel {
             position: absolute; top: 30px; left: 30px; z-index: 500;
             background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(20px);
-            padding: 12px 18px; border-radius: 50px; border: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex; align-items: center; gap: 12px;
+            padding: 12px 22px; border-radius: 50px; border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex; align-items: center; gap: 18px;
             opacity: 0; transform: translateX(-30px); transition: 1s ease 0.5s;
         }
         body.loaded .music-panel { opacity: 1; transform: translateX(0); }
-        #mute-btn { cursor: pointer; width: 25px; display: flex; justify-content: center; transition: 0.2s; }
+        
+        .nav-btn { cursor: pointer; color: rgba(255,255,255,0.6); transition: 0.2s; font-size: 14px; }
+        .nav-btn:hover { color: #fff; transform: scale(1.2); }
+
+        #mute-btn { cursor: pointer; width: 20px; display: flex; justify-content: center; transition: 0.2s; }
         #mute-btn:hover { transform: scale(1.2); }
-        .vol-slider { width: 70px; height: 3px; -webkit-appearance: none; background: rgba(255,255,255,0.1); border-radius: 5px; }
-        .vol-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; background: #fff; border-radius: 50%; cursor: pointer; }
+
+        .vol-slider { width: 60px; height: 3px; -webkit-appearance: none; background: rgba(255,255,255,0.1); border-radius: 5px; }
+        .vol-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 10px; height: 10px; background: #fff; border-radius: 50%; cursor: pointer; }
 
         /* ARKA PLAN */
         #bg-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
         .container { text-align: center; z-index: 10; width: 100%; max-width: 950px; padding: 20px; position: relative; }
 
-        /* ANİMASYONLAR */
+        /* ANIMASYONLAR */
         .anim-wrap { opacity: 0; transform: translateY(30px); transition: 1s cubic-bezier(0.165, 0.84, 0.44, 1) forwards; }
         body.loaded .anim-wrap { opacity: 1; transform: translateY(0); }
 
@@ -88,7 +94,6 @@
         .yt-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.4); transform: translateY(-5px); }
         .yt-btn i { color: #ff0000; font-size: 18px; margin-right: 12px; }
 
-        /* ÖZEL ANA BUTON */
         .special-main-btn {
             background: #111 !important; color: #fff !important;
             height: 65px; border: 1px solid #fff !important;
@@ -122,9 +127,11 @@
     </div>
 
     <div class="music-panel">
+        <i class="fa-solid fa-backward-step nav-btn" onclick="prevTrack()"></i>
         <div id="mute-btn" onclick="toggleMute()">
             <i id="panel-icon" class="fa-solid fa-volume-high"></i>
         </div>
+        <i class="fa-solid fa-forward-step nav-btn" onclick="nextTrack()"></i>
         <input type="range" class="vol-slider" id="vol-slider" min="0" max="100" value="30">
     </div>
 
@@ -174,30 +181,26 @@
         let player;
         let isMuted = false;
         let hudTimeout;
+        let currentTrackIndex = 0;
+        const tracks = ["KhqNTjbQ71A", "eCRG6UAsDgc", "x5Oag4hISgU", "gelwwYuYGn0"];
 
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
-                height: '1', width: '1', videoId: 'qvF5iq_s01Q',
-                playerVars: { 'autoplay': 1, 'loop': 1, 'playlist': 'qvF5iq_s01Q' },
+                height: '1', width: '1',
+                videoId: tracks[currentTrackIndex],
+                playerVars: { 'autoplay': 1, 'loop': 0 },
                 events: { 'onReady': (e) => e.target.setVolume(30) }
             });
         }
 
-        function updateAudioUI(muteState) {
-            const panelIcon = document.getElementById('panel-icon');
+        function showHUD(text, iconClass) {
             const hud = document.getElementById('audio-hud');
             const hudIcon = document.getElementById('hud-icon');
             const hudText = document.getElementById('hud-text');
 
-            if (muteState) {
-                panelIcon.className = "fa-solid fa-volume-xmark";
-                hudIcon.className = "fa-solid fa-volume-xmark";
-                hudText.innerText = "SES KAPATILDI";
-            } else {
-                panelIcon.className = "fa-solid fa-volume-high";
-                hudIcon.className = "fa-solid fa-volume-high";
-                hudText.innerText = "SES ACIK";
-            }
+            hudIcon.className = "fa-solid " + iconClass;
+            hudText.innerText = text;
+            
             hud.classList.add('show');
             clearTimeout(hudTimeout);
             hudTimeout = setTimeout(() => { hud.classList.remove('show'); }, 1500);
@@ -206,16 +209,38 @@
         function toggleMute() {
             if (!player) return;
             isMuted = !isMuted;
-            if (isMuted) player.mute(); else player.unMute();
-            updateAudioUI(isMuted);
+            const panelIcon = document.getElementById('panel-icon');
+            if (isMuted) {
+                player.mute();
+                panelIcon.className = "fa-solid fa-volume-xmark";
+                showHUD("SES KAPATILDI", "fa-volume-xmark");
+            } else {
+                player.unMute();
+                panelIcon.className = "fa-solid fa-volume-high";
+                showHUD("SES ACIK", "fa-volume-high");
+            }
+        }
+
+        function nextTrack() {
+            currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+            player.loadVideoById(tracks[currentTrackIndex]);
+            showHUD("BIR SONRAKI MUZIK", "fa-forward-step");
+            if (isMuted) toggleMute(); // Muzik degisince sesi ac
+        }
+
+        function prevTrack() {
+            currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+            player.loadVideoById(tracks[currentTrackIndex]);
+            showHUD("BIR ONCEKI MUZIK", "fa-backward-step");
+            if (isMuted) toggleMute();
         }
 
         document.getElementById('vol-slider').addEventListener('input', (e) => {
             const val = parseInt(e.target.value);
             if (!player) return;
             player.setVolume(val);
-            if (val === 0 && !isMuted) { isMuted = true; player.mute(); updateAudioUI(true); }
-            else if (val > 0 && isMuted) { isMuted = false; player.unMute(); updateAudioUI(false); }
+            if (val === 0 && !isMuted) { toggleMute(); }
+            else if (val > 0 && isMuted) { toggleMute(); }
         });
 
         function startExperience() {
@@ -227,6 +252,7 @@
             }, 500);
         }
 
+        // Canvas Partikuller
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let parts = [];
