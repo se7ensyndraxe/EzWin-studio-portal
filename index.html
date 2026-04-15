@@ -16,7 +16,7 @@
             min-height: 100vh; overflow: hidden; position: relative;
         }
 
-        /* --- ARKA PLAN (MAKSİMUM YOĞUNLUK) --- */
+        /* --- ARKA PLAN (SİBER AKIŞ MOTORU) --- */
         #bg-canvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1; background: radial-gradient(circle at center, #111 0%, #000 100%);
@@ -167,26 +167,32 @@
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        // --- ARKA PLAN MOTORU (YOĞUNLUK ARTTI) ---
+        // --- ARKA PLAN MOTORU (YOĞUNLUK & OLASILIK SİSTEMİ) ---
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let shapes = [];
         const shapeTypes = ['square', 'triangle', 'circle', 'x', 'code'];
-        const codes = ["{ }", "EZ", "WIN", "ROOT", "404", "SYS", "2026", "LD", "->", "=>"];
+        
+        // Olasılık havuzu: EZ ve WIN çok çıksın, LD✦ onlardan biraz az, diğerleri normal
+        const textPool = [
+            "EZ", "EZ", "EZ", "WIN", "WIN", "WIN", 
+            "𝐋𝐃✦", "𝐋𝐃✦", 
+            "{ }", "ROOT", "404", "SYS"
+        ];
 
         function initBG() {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
             shapes = [];
-            for(let i=0; i<120; i++) { // Yoğunluk 120'ye çıktı
+            for(let i=0; i<125; i++) { 
                 shapes.push({
                     x: Math.random()*canvas.width, y: Math.random()*canvas.height,
-                    size: Math.random()*20+10,
+                    size: Math.random()*18+10,
                     type: shapeTypes[Math.floor(Math.random()*shapeTypes.length)],
-                    speed: Math.random()*0.6+0.2, // Hız arttı
-                    op: Math.random()*0.3+0.1, // Parlaklık arttı
+                    speed: Math.random()*0.5+0.15,
+                    op: Math.random()*0.3+0.1, 
                     rot: Math.random()*Math.PI*2,
-                    rotS: (Math.random()-0.5)*0.02,
-                    text: codes[Math.floor(Math.random() * codes.length)]
+                    rotS: (Math.random()-0.5)*0.015,
+                    text: textPool[Math.floor(Math.random() * textPool.length)]
                 });
             }
         }
@@ -199,11 +205,17 @@
                 ctx.strokeStyle = `rgba(255,255,255,${s.op})`; 
                 ctx.fillStyle = `rgba(255,255,255,${s.op})`;
                 ctx.lineWidth = 1; ctx.beginPath();
-                if(s.type==='square') ctx.strokeRect(-s.size/2, -s.size/2, s.size, s.size);
-                else if(s.type==='circle') { ctx.arc(0,0,s.size/2,0,Math.PI*2); ctx.stroke(); }
-                else if(s.type==='triangle') { ctx.moveTo(0,-s.size/2); ctx.lineTo(s.size/2,s.size/2); ctx.lineTo(-s.size/2,s.size/2); ctx.closePath(); ctx.stroke(); }
-                else if(s.type==='code') { ctx.font = `bold ${s.size}px 'Fira Code', monospace`; ctx.fillText(s.text, 0, 0); }
-                else { ctx.moveTo(-s.size/2,-s.size/2); ctx.lineTo(s.size/2,s.size/2); ctx.moveTo(s.size/2,-s.size/2); ctx.lineTo(-s.size/2,s.size/2); ctx.stroke(); }
+                
+                if(s.type==='code' || (s.text === "EZ" || s.text === "WIN" || s.text === "𝐋𝐃✦")) {
+                    ctx.font = `bold ${s.size}px 'Fira Code', monospace`;
+                    ctx.fillText(s.text, 0, 0);
+                } else {
+                    if(s.type==='square') ctx.strokeRect(-s.size/2, -s.size/2, s.size, s.size);
+                    else if(s.type==='circle') { ctx.arc(0,0,s.size/2,0,Math.PI*2); ctx.stroke(); }
+                    else if(s.type==='triangle') { ctx.moveTo(0,-s.size/2); ctx.lineTo(s.size/2,s.size/2); ctx.lineTo(-s.size/2,s.size/2); ctx.closePath(); ctx.stroke(); }
+                    else { ctx.moveTo(-s.size/2,-s.size/2); ctx.lineTo(s.size/2,s.size/2); ctx.moveTo(s.size/2,-s.size/2); ctx.lineTo(-s.size/2,s.size/2); ctx.stroke(); }
+                }
+                
                 ctx.restore();
                 s.y -= s.speed; s.rot += s.rotS;
                 if(s.y < -50) s.y = canvas.height+50;
@@ -214,7 +226,6 @@
 
         // --- YOUTUBE & AUDIO ---
         let player, hudTimeout, currentTrackIndex = 0, isLastStateMuted = false;
-        // YouTube ID'leri ve doğru isimleri
         const tracks = [
             { id: "KhqNTjbQ71A", name: "REVENGE" },
             { id: "eCRG6UAsDgc", name: "SLAUGHTER HOUSE" },
@@ -273,16 +284,8 @@
             else { player.mute(); document.getElementById('panel-icon').className = "fa-solid fa-volume-xmark"; showHUD("SES KAPALI", "fa-volume-xmark"); isLastStateMuted = true; }
         }
 
-        function nextTrack() { 
-            currentTrackIndex = (currentTrackIndex + 1) % tracks.length; 
-            selectTrack(currentTrackIndex); 
-            showHUD("SONRAKI: " + tracks[currentTrackIndex].name, "fa-forward-step");
-        }
-        function prevTrack() { 
-            currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length; 
-            selectTrack(currentTrackIndex); 
-            showHUD("ONCEKI: " + tracks[currentTrackIndex].name, "fa-backward-step");
-        }
+        function nextTrack() { currentTrackIndex = (currentTrackIndex + 1) % tracks.length; selectTrack(currentTrackIndex); }
+        function prevTrack() { currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length; selectTrack(currentTrackIndex); }
 
         document.getElementById('vol-slider').addEventListener('input', (e) => { 
             const vol = e.target.value; if(player) player.setVolume(vol);
