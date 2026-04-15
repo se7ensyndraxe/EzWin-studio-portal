@@ -212,7 +212,7 @@
         }
 
         function triggerFlash() {
-            // Flash Sesi
+            // Flash Sesi (Yüksek frekanslı giriş efekti)
             const aCtx = new (window.AudioContext || window.webkitAudioContext)();
             const osc = aCtx.createOscillator(); const g = aCtx.createGain();
             osc.frequency.setValueAtTime(3800, aCtx.currentTime);
