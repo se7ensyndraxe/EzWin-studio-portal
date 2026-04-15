@@ -16,7 +16,7 @@
             min-height: 100vh; overflow: hidden; position: relative;
         }
 
-        /* --- SAF KOD ARKA PLAN (PS & CYBER SEMBOLLERİ MOTORU) --- */
+        /* --- ARKA PLAN (MAKSİMUM YOĞUNLUK) --- */
         #bg-canvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1; background: radial-gradient(circle at center, #111 0%, #000 100%);
@@ -71,7 +71,6 @@
         }
         .playlist-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
         .playlist-item.playing { background: #fff; color: #000; border-color: #fff; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
         .container { text-align: center; z-index: 100; width: 100%; max-width: 950px; padding: 20px; position: relative; }
         .anim-wrap { opacity: 0; transform: translateY(30px); transition: 1.2s forwards; }
@@ -168,7 +167,7 @@
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        // --- PS SEMBOLLERİ & SİBER KODLAR ARKA PLAN MOTORU ---
+        // --- ARKA PLAN MOTORU (YOĞUNLUK ARTTI) ---
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let shapes = [];
@@ -178,16 +177,15 @@
         function initBG() {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
             shapes = [];
-            // Daha fazla parça ile daha zengin görünüm
-            for(let i=0; i<60; i++) {
+            for(let i=0; i<120; i++) { // Yoğunluk 120'ye çıktı
                 shapes.push({
                     x: Math.random()*canvas.width, y: Math.random()*canvas.height,
-                    size: Math.random()*22+12,
+                    size: Math.random()*20+10,
                     type: shapeTypes[Math.floor(Math.random()*shapeTypes.length)],
-                    speed: Math.random()*0.4+0.1,
-                    op: Math.random()*0.25+0.1, // Parlaklık artırıldı
+                    speed: Math.random()*0.6+0.2, // Hız arttı
+                    op: Math.random()*0.3+0.1, // Parlaklık arttı
                     rot: Math.random()*Math.PI*2,
-                    rotS: (Math.random()-0.5)*0.015,
+                    rotS: (Math.random()-0.5)*0.02,
                     text: codes[Math.floor(Math.random() * codes.length)]
                 });
             }
@@ -200,14 +198,12 @@
                 ctx.translate(s.x, s.y); ctx.rotate(s.rot);
                 ctx.strokeStyle = `rgba(255,255,255,${s.op})`; 
                 ctx.fillStyle = `rgba(255,255,255,${s.op})`;
-                ctx.lineWidth = 1.2; ctx.beginPath();
-                
+                ctx.lineWidth = 1; ctx.beginPath();
                 if(s.type==='square') ctx.strokeRect(-s.size/2, -s.size/2, s.size, s.size);
                 else if(s.type==='circle') { ctx.arc(0,0,s.size/2,0,Math.PI*2); ctx.stroke(); }
                 else if(s.type==='triangle') { ctx.moveTo(0,-s.size/2); ctx.lineTo(s.size/2,s.size/2); ctx.lineTo(-s.size/2,s.size/2); ctx.closePath(); ctx.stroke(); }
                 else if(s.type==='code') { ctx.font = `bold ${s.size}px 'Fira Code', monospace`; ctx.fillText(s.text, 0, 0); }
                 else { ctx.moveTo(-s.size/2,-s.size/2); ctx.lineTo(s.size/2,s.size/2); ctx.moveTo(s.size/2,-s.size/2); ctx.lineTo(-s.size/2,s.size/2); ctx.stroke(); }
-                
                 ctx.restore();
                 s.y -= s.speed; s.rot += s.rotS;
                 if(s.y < -50) s.y = canvas.height+50;
@@ -218,12 +214,18 @@
 
         // --- YOUTUBE & AUDIO ---
         let player, hudTimeout, currentTrackIndex = 0, isLastStateMuted = false;
-        const tracks = ["KhqNTjbQ71A", "eCRG6UAsDgc", "x5Oag4hISgU", "gelwwYuYGn0"];
+        // YouTube ID'leri ve doğru isimleri
+        const tracks = [
+            { id: "KhqNTjbQ71A", name: "REVENGE" },
+            { id: "eCRG6UAsDgc", name: "SLAUGHTER HOUSE" },
+            { id: "x5Oag4hISgU", name: "MONTAGEM PR FUNK" },
+            { id: "gelwwYuYGn0", name: "METAMORPHOSIS" }
+        ];
 
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
-                height: '1', width: '1', videoId: tracks[0],
-                playerVars: { 'autoplay': 0, 'loop': 0 },
+                height: '1', width: '1', videoId: tracks[0].id,
+                playerVars: { 'autoplay': 0, 'loop': 1 },
                 events: { 'onReady': (e) => e.target.setVolume(30) }
             });
         }
@@ -256,10 +258,12 @@
         }
 
         function togglePlaylist() { document.getElementById('playlist-menu').classList.toggle('active'); }
+        
         function selectTrack(index) {
-            currentTrackIndex = index; player.loadVideoById(tracks[currentTrackIndex]);
+            currentTrackIndex = index;
+            player.loadVideoById(tracks[currentTrackIndex].id);
             document.querySelectorAll('.playlist-item').forEach((it, idx) => it.classList.toggle('playing', idx === index));
-            showHUD("MUZIK DEGISTIRILDI", "fa-music");
+            showHUD(tracks[currentTrackIndex].name, "fa-music");
             if(document.getElementById('playlist-menu').classList.contains('active')) togglePlaylist();
         }
 
@@ -269,8 +273,16 @@
             else { player.mute(); document.getElementById('panel-icon').className = "fa-solid fa-volume-xmark"; showHUD("SES KAPALI", "fa-volume-xmark"); isLastStateMuted = true; }
         }
 
-        function nextTrack() { currentTrackIndex = (currentTrackIndex + 1) % tracks.length; selectTrack(currentTrackIndex); }
-        function prevTrack() { currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length; selectTrack(currentTrackIndex); }
+        function nextTrack() { 
+            currentTrackIndex = (currentTrackIndex + 1) % tracks.length; 
+            selectTrack(currentTrackIndex); 
+            showHUD("SONRAKI: " + tracks[currentTrackIndex].name, "fa-forward-step");
+        }
+        function prevTrack() { 
+            currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length; 
+            selectTrack(currentTrackIndex); 
+            showHUD("ONCEKI: " + tracks[currentTrackIndex].name, "fa-backward-step");
+        }
 
         document.getElementById('vol-slider').addEventListener('input', (e) => { 
             const vol = e.target.value; if(player) player.setVolume(vol);
