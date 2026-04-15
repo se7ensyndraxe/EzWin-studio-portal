@@ -3,281 +3,241 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EZWIN STUDIO | OFFICIAL</title>
+    <title>EzWın Studıo | Official Portal</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* --- TEMEL AYARLAR --- */
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap');
-        * { margin: 0; padding: 0; box-sizing: border-box; text-transform: uppercase; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            background-color: #050505; color: white;
+            background-color: #0c0c0c; /* Kapalı Gri Arka Plan */
+            color: #ffffff; /* Beyaz Metinler */
             font-family: 'Poppins', sans-serif;
             display: flex; justify-content: center; align-items: center;
             min-height: 100vh; overflow: hidden; position: relative;
         }
 
-        /* --- YENI PREMıUM ARKA PLAN (CYBERPUNK SMOKE) --- */
-        #bg-smoke {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('https://imgur.com/vHqY7G1.png'); /* Yüksek kaliteli duman dokusu */
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            opacity: 0.15; /* Sönük ve derin durması için */
-            z-index: 0;
-            pointer-events: none;
-            filter: blur(5px);
-            animation: smokeMove 60s linear infinite;
+        /* --- ARKA PLAN ANIMASYONU --- */
+        #bg-canvas {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0; pointer-events: none;
         }
 
-        #bg-radial-gradient {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% 50%, rgba(100, 0, 255, 0.1), rgba(255, 0, 100, 0.1) 60%, rgba(0, 0, 0, 0.9) 100%);
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        @keyframes smokeMove {
-            0% { background-position: center; }
-            25% { background-position: top left; }
-            50% { background-position: bottom right; }
-            75% { background-position: top right; }
-            100% { background-position: center; }
-        }
-
-        /* --- FLASHBANG KATMANI --- */
-        #flash-bang {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #fff; z-index: 11000; opacity: 0; pointer-events: none;
-        }
-
-        /* GİRİŞ EKRANI */
+        /* --- GİRİŞ EKRANI (Müzik için) --- */
         #enter-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 10000; display: flex; 
+            background: #0c0c0c; z-index: 10000; display: flex; 
             justify-content: center; align-items: center; cursor: pointer;
+            transition: opacity 0.8s ease;
         }
-        #enter-overlay h2 { font-size: 12px; letter-spacing: 12px; color: #fff; animation: glowPulse 2s infinite; }
-        @keyframes glowPulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; text-shadow: 0 0 15px #fff; } }
+        #enter-overlay h2 { font-size: 14px; letter-spacing: 15px; color: #fff; text-transform: uppercase; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
 
-        /* GRADYAN VE HUD */
-        @keyframes gradientMove { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        .animated-gradient { background: linear-gradient(90deg, #333, #fff, #333); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: gradientMove 4s linear infinite; }
-
-        #audio-hud {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
-            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(20px);
-            padding: 30px 50px; border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.2);
-            z-index: 9000; display: flex; flex-direction: column; align-items: center; gap: 15px;
-            opacity: 0; pointer-events: none; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        #audio-hud.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-
-        /* MÜZİK PANELİ */
+        /* --- SES PANELİ (Sol Üst) --- */
         .music-panel {
-            position: absolute; top: 30px; left: 30px; z-index: 8000;
-            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(25px);
-            padding: 12px 22px; border-radius: 50px; border: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex; align-items: center; gap: 18px;
-            opacity: 0; transform: translateX(-30px); transition: 1s ease 0.5s;
+            position: absolute; top: 30px; left: 30px; z-index: 500;
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px);
+            padding: 12px 18px; border-radius: 50px; border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex; align-items: center; gap: 12px;
+            transition: 0.3s ease;
         }
-        body.loaded .music-panel { opacity: 1; transform: translateX(0); }
-        .nav-btn, #mute-btn, #menu-btn { cursor: pointer; transition: 0.3s; color: rgba(255,255,255,0.7); }
-        .nav-btn:hover, #mute-btn:hover, #menu-btn:hover { transform: scale(1.2); color: #fff; }
-        .vol-slider { width: 60px; height: 3px; -webkit-appearance: none; background: rgba(255,255,255,0.1); border-radius: 5px; }
-        .vol-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; background: #fff; border-radius: 50%; cursor: pointer; }
+        .music-panel:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2); }
+        .music-panel i { color: #fff; font-size: 14px; }
+        .vol-slider { width: 80px; height: 3px; -webkit-appearance: none; background: rgba(255,255,255,0.2); border-radius: 5px; }
+        .vol-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; background: #fff; border-radius: 50%; cursor: pointer; transition: 0.2s; }
+        .vol-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
 
-        /* PLAYLIST MENÜSÜ */
-        #playlist-menu {
-            position: absolute; top: 85px; left: 30px; width: 320px;
-            background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(30px);
-            border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 15px; display: none; flex-direction: column; gap: 8px;
-            z-index: 8001; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-        }
-        #playlist-menu.active { display: flex; animation: fadeIn 0.3s ease forwards; }
-        .playlist-item {
-            padding: 12px 18px; border-radius: 8px; font-size: 10px; font-weight: 800;
-            cursor: pointer; transition: 0.2s; color: rgba(255,255,255,0.4);
-            display: flex; justify-content: space-between; align-items: center;
-            border: 1px solid transparent; letter-spacing: 1px;
-        }
-        .playlist-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
-        .playlist-item.playing { background: #fff; color: #000; border-color: #fff; }
+        /* --- ANA KONTEYNER --- */
+        .container { text-align: center; z-index: 10; width: 100%; max-width: 900px; padding: 20px; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        /* BAŞLIK VE SUBTEXT */
+        h1.studio-title { font-size: 44px; font-weight: 900; letter-spacing: -1px; text-transform: uppercase; color: #fff; margin-bottom: 2px; }
+        .designer-tag { font-size: 9px; color: rgba(255,255,255,0.4); letter-spacing: 5px; margin-bottom: 50px; text-transform: uppercase; }
 
-        /* ANA TASARIM VE BUTONLAR */
-        .container { text-align: center; z-index: 100; width: 100%; max-width: 950px; padding: 20px; position: relative; }
-        .anim-wrap { opacity: 0; transform: translateY(30px); transition: 1.2s forwards; }
-        body.loaded .anim-wrap { opacity: 1; transform: translateY(0); }
-
-        h1.studio-title { font-size: 48px; font-weight: 900; letter-spacing: -1px; margin-bottom: 5px; }
-        .designer-tag { font-size: 9px; color: rgba(255,255,255,0.4); letter-spacing: 5px; margin-bottom: 50px; }
-
+        /* 3 SÜTUNLU LAYOUT */
         .layout-grid { display: flex; align-items: center; gap: 20px; width: 100%; }
         .side-col { flex: 1; display: flex; flex-direction: column; gap: 15px; }
         .center-col { flex: 1.3; display: flex; flex-direction: column; gap: 15px; }
 
-        .base-btn { height: 55px; border-radius: 12px; text-decoration: none; font-weight: 800; display: flex; align-items: center; justify-content: center; transition: 0.4s ease-out; font-size: 11px; letter-spacing: 1px; cursor: pointer; z-index: 105; position: relative; overflow: hidden; pointer-events: all; }
-        .white-btn { background: #fff; color: #000; border: none; }
-        .white-btn:hover { transform: translateY(-7px) scale(1.02); box-shadow: 0 15px 30px rgba(255,255,255,0.2); }
-        .yt-btn { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); justify-content: flex-start; padding-left: 20px; backdrop-filter: blur(5px); }
-        .yt-btn:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.5); transform: translateY(-7px); }
-        .yt-btn i { color: #ff0000; margin-right: 15px; font-size: 18px; }
-        .special-main-btn { background: #111 !important; color: #fff !important; height: 65px; border: 1px solid #fff !important; animation: mainPulse 2s infinite; }
+        @media (max-width: 800px) { .layout-grid { flex-direction: column; } }
 
-        @keyframes mainPulse { 0%, 100% { box-shadow: 0 0 5px rgba(255,255,255,0.2); } 50% { box-shadow: 0 0 25px rgba(255,255,255,0.4); } }
-        .powered-by { position: fixed; bottom: 30px; right: 30px; font-size: 9px; font-weight: 900; letter-spacing: 3px; z-index: 5000; }
+        /* BUTON TASARIMLARI (Kapalı Gri & Beyaz) */
+        .base-btn {
+            height: 55px; border-radius: 10px; text-decoration: none; font-weight: 800;
+            display: flex; align-items: center; justify-content: center; transition: 0.3s all;
+            font-size: 11px; letter-spacing: 0.5px; border: 1px solid transparent; text-transform: uppercase;
+        }
 
-        #video-container { position: absolute; left: -9999px; }
+        /* Beyaz Butonlar */
+        .white-btn { background: #fff; color: #000; }
+        .white-btn:hover { transform: translateY(-5px); box-shadow: 0 5px 25px rgba(255,255,255,0.4); }
+
+        /* YouTube Butonları */
+        .yt-btn {
+            background: #0c0c0c; color: #fff; border-color: rgba(255,255,255,0.1);
+            justify-content: flex-start; padding-left: 15px;
+        }
+        .yt-btn:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.4); transform: translateX(5px); }
+        .yt-btn i { color: #fff; font-size: 18px; margin-right: 12px; }
+
+        /* ANA BUTON */
+        .main-dc-btn {
+            background: #0c0c0c; color: #fff; border-color: #fff;
+            height: 60px; font-size: 12px;
+        }
+        .main-dc-btn:hover { background: #fff; color: #000; box-shadow: 0 0 30px rgba(255,255,255,0.6); }
+
+        /* FOUNDER VE POWERED BY */
+        .founder-tag { font-size: 9px; color: rgba(255,255,255,0.3); letter-spacing: 4px; margin-top: 40px; text-transform: uppercase; }
+        .powered-by {
+            position: fixed; bottom: 30px; right: 30px; font-size: 9px;
+            color: rgba(255,255,255,0.3); font-weight: 700; letter-spacing: 3px;
+            text-decoration: none; text-transform: uppercase;
+        }
+
+        /* YouTube Gömülü */
+        #video-container { position: absolute; left: -9999px; top: 0; }
     </style>
 </head>
 <body>
 
-    <div id="bg-radial-gradient"></div>
-    <div id="bg-smoke"></div>
-
-    <div id="flash-bang"></div>
-
-    <div id="enter-overlay" onclick="triggerFlash()">
+    <div id="enter-overlay" onclick="startExperience()">
         <h2>CLICK TO ENTER</h2>
     </div>
 
-    <div id="audio-hud">
-        <i id="hud-icon" class="fa-solid fa-volume-high"></i>
-        <span id="hud-text">SES ACIK</span>
-    </div>
-
     <div class="music-panel">
-        <i id="menu-btn" class="fa-solid fa-bars" onclick="togglePlaylist()"></i>
-        <div style="width: 1px; height: 15px; background: rgba(255,255,255,0.2);"></div>
-        <i class="fa-solid fa-backward-step nav-btn" onclick="prevTrack()"></i>
-        <div id="mute-btn" onclick="toggleMute()">
-            <i id="panel-icon" class="fa-solid fa-volume-high"></i>
-        </div>
-        <i class="fa-solid fa-forward-step nav-btn" onclick="nextTrack()"></i>
+        <i class="fa-solid fa-volume-high"></i>
         <input type="range" class="vol-slider" id="vol-slider" min="0" max="100" value="30">
-    </div>
-
-    <div id="playlist-menu">
-        <div class="playlist-item playing" data-index="0" onclick="selectTrack(0)"><span>REVENGE</span> <i class="fa-solid fa-music"></i></div>
-        <div class="playlist-item" data-index="1" onclick="selectTrack(1)"><span>SLAUGHTER HOUSE</span> <i class="fa-solid fa-music"></i></div>
-        <div class="playlist-item" data-index="2" onclick="selectTrack(2)"><span>MONTAGEM PR FUNK</span> <i class="fa-solid fa-music"></i></div>
-        <div class="playlist-item" data-index="3" onclick="selectTrack(3)"><span>METAMORPHOSIS</span> <i class="fa-solid fa-music"></i></div>
     </div>
 
     <div id="video-container"><div id="player"></div></div>
 
+    <canvas id="bg-canvas"></canvas>
+
     <div class="container">
-        <div class="anim-wrap" style="transition-delay: 0.1s;">
-            <h1 class="studio-title animated-gradient">EZWIN STUDIO</h1>
-            <div class="designer-tag">DESIGNED BY LD✦ SE7ENSYNDRAXE</div>
-        </div>
+        <h1 class="studio-title">EzWın Studıo</h1>
+        <div class="designer-tag">DESİGNED BY 𝐋𝐃✦ SE7ENSYNDRAXE</div>
 
         <div class="layout-grid">
-            <div class="side-col anim-wrap" style="transition-delay: 0.3s;">
-                <a href="https://discord.gg/CnapcSfNq5" target="_blank" class="base-btn white-btn">JOIN THE EZWIN MUSIC</a>
-                <a href="https://discord.gg/G7s3kgtSJX" target="_blank" class="base-btn white-btn">EZWIN HESAP HIZMETLERI</a>
+            <div class="side-col">
+                <a href="https://discord.gg/CnapcSfNq5" target="_blank" class="base-btn white-btn">JOIN THE EzWin Music</a>
+                <a href="https://discord.gg/G7s3kgtSJX" target="_blank" class="base-btn white-btn">EzWin Hesap Hizmetleri #Roblox</a>
             </div>
 
-            <div class="center-col anim-wrap" style="transition-delay: 0.2s;">
-                <a href="https://www.youtube.com/@EzW%C4%B1nStud%C4%B1o" target="_blank" class="base-btn yt-btn"><i class="fa-brands fa-youtube"></i> <b>EZWIN STUDIO</b></a>
-                <a href="https://www.youtube.com/@EzWınMusıc" target="_blank" class="base-btn yt-btn"><i class="fa-brands fa-youtube"></i> <b>EZWIN MUSIC</b></a>
-                <a href="https://www.youtube.com/@EzWinYaSen" target="_blank" class="base-btn yt-btn"><i class="fa-brands fa-youtube"></i> <b>EZWIN YASEN</b></a>
-                <a href="https://discord.gg/xDydNyHnUd" target="_blank" class="base-btn special-main-btn">JOIN THE EZWIN STUDIO</a>
+            <div class="center-col">
+                <a href="https://www.youtube.com/@EzW%C4%B1nStud%C4%B1o" target="_blank" class="base-btn yt-btn">
+                    <i class="fa-brands fa-youtube"></i> <b>EzWın Studıo</b>
+                </a>
+                <a href="https://www.youtube.com/@EzWınMusıc" target="_blank" class="base-btn yt-btn">
+                    <i class="fa-brands fa-youtube"></i> <b>EzWın Musıc</b>
+                </a>
+                <a href="https://www.youtube.com/@EzWinYaSen" target="_blank" class="base-btn yt-btn">
+                    <i class="fa-brands fa-youtube"></i> <b>EzWın YaSen</b>
+                </a>
+                <a href="https://discord.gg/xDydNyHnUd" target="_blank" class="base-btn main-dc-btn">JOIN THE EzWın Studıo</a>
             </div>
 
-            <div class="side-col anim-wrap" style="transition-delay: 0.4s;">
-                <a href="https://discord.gg/jwtmt46ZPb" target="_blank" class="base-btn white-btn">EZWIN UNCOPYLOCKED</a>
-                <a href="https://discord.gg/m2uDdfUEdf" target="_blank" class="base-btn white-btn">JOIN THE EZWIN CHEAT</a>
+            <div class="side-col">
+                <a href="https://discord.gg/jwtmt46ZPb" target="_blank" class="base-btn white-btn">EzWın UncopyLocked</a>
+                <a href="https://discord.gg/m2uDdfUEdf" target="_blank" class="base-btn white-btn">JOIN THE EzWin Cheat</a>
             </div>
         </div>
 
-        <div class="anim-wrap" style="transition-delay: 0.5s;">
-            <div style="font-size: 9px; color: rgba(255,255,255,0.3); letter-spacing: 4px; margin-top: 40px;">FOUNDER: EZWINYASEN</div>
-        </div>
+        <div class="founder-tag">FOUNDER: ezwinyasen</div>
     </div>
 
-    <div class="powered-by animated-gradient">POWERED BY: EZWINSTUDIO</div>
+    <div class="powered-by">POWERED BY: EZWINSTUDIO</div>
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        let player;
-        let hudTimeout;
-        let currentTrackIndex = 0;
-        const tracks = ["KhqNTjbQ71A", "eCRG6UAsDgc", "x5Oag4hISgU", "gelwwYuYGn0"];
+        // --- ARKA PLAN ANİMASYONU (Modern Partikül Plexus) ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let numParticles = 80;
 
+        function resize() {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            numParticles = canvas.width < 768 ? 40 : 80; // Mobilde daha az partikül
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.4;
+                this.vy = (Math.random() - 0.5) * 0.4;
+                this.size = Math.random() * 1.5;
+            }
+            update() {
+                this.x += this.vx; this.y += this.vy;
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < numParticles; i++) { particles.push(new Particle()); }
+        }
+
+        function drawParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                // Çizgiler
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 120) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${1 - dist / 120})`;
+                        ctx.lineWidth = 0.4;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(drawParticles);
+        }
+        initParticles(); drawParticles();
+
+        // --- YOUTUBE PLAYER SES (Phonk) ---
+        let player;
+        const volSlider = document.getElementById('vol-slider');
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
-                height: '1', width: '1', videoId: tracks[0],
-                playerVars: { 'autoplay': 0, 'loop': 0 },
-                events: { 'onReady': (e) => e.target.setVolume(30) }
+                height: '0', width: '0',
+                videoId: 'gelwwYuYGn0', // Just the Two of Us Phonk Remix
+                playerVars: { 'autoplay': 1, 'loop': 1, 'playlist': 'gelwwYuYGn0', 'controls': 0 },
+                events: {
+                    'onReady': (event) => { event.target.setVolume(volSlider.value); },
+                    'onStateChange': (event) => { if (event.data === YT.PlayerState.ENDED) { player.playVideo(); } }
+                }
             });
         }
 
-        function triggerFlash() {
-            const flash = document.getElementById('flash-bang');
-            const overlay = document.getElementById('enter-overlay');
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-
-            oscillator.type = 'sine';
-            oscillator.frequency.setValueAtTime(3800, audioCtx.currentTime); 
-            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 6); 
-
-            oscillator.connect(gainNode); gainNode.connect(audioCtx.destination);
-            oscillator.start(); oscillator.stop(audioCtx.currentTime + 6);
-
-            flash.style.opacity = '1';
-            overlay.style.display = 'none';
-
-            setTimeout(() => {
-                document.body.classList.add('loaded');
-                if(player) player.playVideo(); 
-                let opacity = 1;
-                const fade = setInterval(() => {
-                    opacity -= 0.015;
-                    flash.style.opacity = opacity;
-                    if(opacity <= 0) { clearInterval(fade); flash.style.display = 'none'; }
-                }, 50);
-            }, 600);
+        function startExperience() {
+            document.getElementById('enter-overlay').style.opacity = '0';
+            setTimeout(() => { document.getElementById('enter-overlay').style.display = 'none'; }, 800);
+            if(player) player.playVideo();
         }
 
-        function showHUD(text, iconClass) {
-            const hud = document.getElementById('audio-hud');
-            const hudIcon = document.getElementById('hud-icon');
-            const hudText = document.getElementById('hud-text');
-            hudIcon.className = "fa-solid " + iconClass;
-            hudText.innerText = text;
-            hud.classList.add('show');
-            clearTimeout(hudTimeout);
-            hudTimeout = setTimeout(() => hud.classList.remove('show'), 1500);
-        }
-
-        function togglePlaylist() { document.getElementById('playlist-menu').classList.toggle('active'); }
-
-        function selectTrack(index) {
-            currentTrackIndex = index;
-            player.loadVideoById(tracks[currentTrackIndex]);
-            document.querySelectorAll('.playlist-item').forEach((it, idx) => {
-                it.classList.toggle('playing', idx === index);
-            });
-            togglePlaylist();
-        }
-
-        function toggleMute() {
-            if (!player) return;
-            if (player.isMuted()) { player.unMute(); document.getElementById('panel-icon').className = "fa-solid fa-volume-high"; }
-            else { player.mute(); document.getElementById('panel-icon').className = "fa-solid fa-volume-xmark"; }
-        }
-
-        function nextTrack() { currentTrackIndex = (currentTrackIndex + 1) % tracks.length; selectTrack(currentTrackIndex); togglePlaylist(); }
-        function prevTrack() { currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length; selectTrack(currentTrackIndex); togglePlaylist(); }
-
-        document.getElementById('vol-slider').addEventListener('input', (e) => { if(player) player.setVolume(e.target.value); });
+        volSlider.addEventListener('input', (e) => {
+            if(player && typeof player.setVolume === 'function') { player.setVolume(e.target.value); }
+        });
     </script>
 </body>
 </html>
