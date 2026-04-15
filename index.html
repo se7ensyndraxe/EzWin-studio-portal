@@ -49,14 +49,19 @@
         @keyframes gradientMove { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         .animated-gradient { background: linear-gradient(90deg, #333, #fff, #333); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: gradientMove 4s linear infinite; }
 
+        /* HUD PANELİ - ŞEFFAF, BLUR VE BEYAZ ÇERÇEVELİ */
         #audio-hud {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
-            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(20px);
-            padding: 30px 50px; border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.02); /* Tamamen şeffafa yakın */
+            backdrop-filter: blur(25px); /* Güçlü blur efekti */
+            padding: 35px 60px; border-radius: 24px; 
+            border: 2px solid rgba(255, 255, 255, 0.8); /* Belirgin beyaz çerçeve */
             z-index: 9000; display: flex; flex-direction: column; align-items: center; gap: 15px;
             opacity: 0; pointer-events: none; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 30px rgba(255,255,255,0.1);
         }
         #audio-hud.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        #audio-hud span { font-weight: 900; letter-spacing: 3px; font-size: 14px; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
 
         /* MÜZİK PANELİ */
         .music-panel {
@@ -111,7 +116,6 @@
         .yt-btn:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.5); transform: translateY(-7px); }
         .yt-btn i { color: #ff0000; margin-right: 15px; font-size: 18px; }
         
-        /* ÖZEL ANA BUTON VE HOVER GÜNCELLEMESİ */
         .special-main-btn { background: #111 !important; color: #fff !important; height: 65px; border: 1px solid #fff !important; animation: mainPulse 2s infinite; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .special-main-btn:hover { 
             background: #fff !important; 
@@ -139,7 +143,7 @@
     </div>
 
     <div id="audio-hud">
-        <i id="hud-icon" class="fa-solid fa-volume-high"></i>
+        <i id="hud-icon" class="fa-solid fa-volume-high" style="font-size: 28px;"></i>
         <span id="hud-text">SES ACIK</span>
     </div>
 
@@ -240,6 +244,7 @@
             }, 600);
         }
 
+        // HUD YAZI SİSTEMİ DÜZELTİLDİ
         function showHUD(text, iconClass) {
             const hud = document.getElementById('audio-hud');
             const hudIcon = document.getElementById('hud-icon');
@@ -259,17 +264,34 @@
             document.querySelectorAll('.playlist-item').forEach((it, idx) => {
                 it.classList.toggle('playing', idx === index);
             });
-            togglePlaylist();
+            showHUD("MUZIK DEGISTIRILDI", "fa-music");
+            if(document.getElementById('playlist-menu').classList.contains('active')) togglePlaylist();
         }
 
         function toggleMute() {
             if (!player) return;
-            if (player.isMuted()) { player.unMute(); document.getElementById('panel-icon').className = "fa-solid fa-volume-high"; showHUD("SES ACIK", "fa-volume-high"); }
-            else { player.mute(); document.getElementById('panel-icon').className = "fa-solid fa-volume-xmark"; showHUD("SES KAPALI", "fa-volume-xmark"); }
+            if (player.isMuted()) { 
+                player.unMute(); 
+                document.getElementById('panel-icon').className = "fa-solid fa-volume-high"; 
+                showHUD("SES ACIK", "fa-volume-high"); 
+            }
+            else { 
+                player.mute(); 
+                document.getElementById('panel-icon').className = "fa-solid fa-volume-xmark"; 
+                showHUD("SES KAPALI", "fa-volume-xmark"); 
+            }
         }
 
-        function nextTrack() { currentTrackIndex = (currentTrackIndex + 1) % tracks.length; selectTrack(currentTrackIndex); }
-        function prevTrack() { currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length; selectTrack(currentTrackIndex); }
+        function nextTrack() { 
+            currentTrackIndex = (currentTrackIndex + 1) % tracks.length; 
+            selectTrack(currentTrackIndex); 
+            showHUD("SONRAKI MUZIK", "fa-forward-step");
+        }
+        function prevTrack() { 
+            currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length; 
+            selectTrack(currentTrackIndex); 
+            showHUD("ONCEKI MUZIK", "fa-backward-step");
+        }
 
         document.getElementById('vol-slider').addEventListener('input', (e) => { if(player) player.setVolume(e.target.value); });
     </script>
