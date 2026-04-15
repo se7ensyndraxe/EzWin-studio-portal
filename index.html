@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EzWın Studıo | Official</title>
+    <title>EzWın Studıo | Offıcıal</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap');
@@ -23,14 +23,14 @@
             justify-content: center; align-items: center; cursor: pointer;
             transition: opacity 0.8s ease, visibility 0.8s;
         }
-        #enter-overlay.hide { opacity: 0; visibility: hidden; }
+        #enter-overlay.hide { opacity: 0; visibility: hidden; pointer-events: none; }
         #enter-overlay h2 { font-size: 12px; letter-spacing: 12px; color: #fff; text-transform: uppercase; animation: glowPulse 2s infinite; }
         @keyframes glowPulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; text-shadow: 0 0 15px #fff; } }
 
         /* MERKEZ SES BİLDİRİMİ (HUD) */
         #audio-hud {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
-            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px);
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(15px);
             padding: 30px 50px; border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.2);
             z-index: 9000; display: flex; flex-direction: column; align-items: center; gap: 15px;
             opacity: 0; pointer-events: none; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -52,31 +52,67 @@
         .vol-slider { width: 70px; height: 3px; -webkit-appearance: none; background: rgba(255,255,255,0.1); border-radius: 5px; }
         .vol-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; background: #fff; border-radius: 50%; cursor: pointer; }
 
-        /* LAYOUT & BUTONLAR */
+        /* ARKA PLAN - TIKLAMALARI ENGELLEMEMESİ İÇİN pointer-events: none EKLENDİ */
         #bg-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
-        .container { text-align: center; z-index: 10; width: 100%; max-width: 950px; padding: 20px; }
+        .container { text-align: center; z-index: 10; width: 100%; max-width: 950px; padding: 20px; position: relative; }
+
+        /* ANİMASYONLAR */
         .anim-wrap { opacity: 0; transform: translateY(30px); transition: 1s cubic-bezier(0.165, 0.84, 0.44, 1) forwards; }
         body.loaded .anim-wrap { opacity: 1; transform: translateY(0); }
+
         h1.studio-title { font-size: 48px; font-weight: 900; letter-spacing: -1px; text-transform: uppercase; background: linear-gradient(180deg, #fff 0%, #444 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .designer-tag { font-size: 9px; color: rgba(255,255,255,0.4); letter-spacing: 5px; margin-bottom: 50px; }
+
         .layout-grid { display: flex; align-items: center; gap: 20px; width: 100%; }
         .side-col { flex: 1; display: flex; flex-direction: column; gap: 15px; }
         .center-col { flex: 1.3; display: flex; flex-direction: column; gap: 15px; }
-        .base-btn { height: 55px; border-radius: 12px; text-decoration: none; font-weight: 800; display: flex; align-items: center; justify-content: center; transition: 0.3s all; font-size: 11px; letter-spacing: 0.5px; }
+
+        @media (max-width: 850px) { .layout-grid { flex-direction: column; } }
+
+        /* BUTONLARIN TIKLANABİLİR OLMASI İÇİN pointer-events GÜVENCEYE ALINDI */
+        .base-btn {
+            height: 55px; border-radius: 12px; text-decoration: none; font-weight: 800;
+            display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;
+            font-size: 11px; letter-spacing: 0.5px; border: 1px solid transparent;
+            cursor: pointer; pointer-events: auto;
+        }
+
         .white-btn { background: #fff; color: #000; text-transform: uppercase; }
-        .white-btn:hover { transform: scale(1.02); box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
-        .yt-btn { background: rgba(255,255,255,0.03); color: #fff; border: 1px solid rgba(255,255,255,0.1); justify-content: flex-start; padding-left: 15px; }
+        .white-btn:hover { transform: translateY(-5px) scale(1.03); box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
+
+        .yt-btn {
+            background: rgba(255,255,255,0.03); color: #fff; border: 1px solid rgba(255,255,255,0.1);
+            justify-content: flex-start; padding-left: 15px; backdrop-filter: blur(10px);
+        }
+        .yt-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.4); transform: translateY(-5px); }
         .yt-btn i { color: #ff0000; font-size: 18px; margin-right: 12px; }
-        .special-main-btn { background: #111 !important; color: #fff !important; height: 65px; border: 1px solid #fff !important; animation: mainPulse 2s infinite ease-in-out; }
+
+        /* ÖZEL ANA BUTON */
+        .special-main-btn {
+            background: #111 !important; color: #fff !important;
+            height: 65px; border: 1px solid #fff !important;
+            animation: mainPulse 2s infinite ease-in-out;
+            position: relative; z-index: 5;
+        }
+        .special-main-btn:hover {
+            background: #fff !important; color: #000 !important;
+            transform: scale(1.05) translateY(-5px) !important;
+            box-shadow: 0 0 30px rgba(255,255,255,0.6) !important;
+            animation: none;
+        }
+
         @keyframes mainPulse { 0%, 100% { box-shadow: 0 0 5px rgba(255,255,255,0.2); } 50% { box-shadow: 0 0 20px rgba(255,255,255,0.4); } }
-        .powered-by { position: fixed; bottom: 30px; right: 30px; font-size: 9px; color: #fff; font-weight: 900; letter-spacing: 3px; text-shadow: 0 0 10px rgba(255,255,255,0.8); opacity: 0.9; }
+
+        .founder-tag { font-size: 9px; color: rgba(255,255,255,0.3); letter-spacing: 4px; margin-top: 40px; }
+        .powered-by { position: fixed; bottom: 30px; right: 30px; font-size: 9px; color: #fff; font-weight: 900; letter-spacing: 3px; text-shadow: 0 0 10px rgba(255,255,255,0.8); opacity: 0.9; pointer-events: none; }
+
         #video-container { position: absolute; left: -9999px; }
     </style>
 </head>
 <body>
 
     <div id="enter-overlay" onclick="startExperience()">
-        <h2>CLICK TO ENTER</h2>
+        <h2>CLıCK TO ENTER</h2>
     </div>
 
     <div id="audio-hud">
@@ -97,38 +133,46 @@
     <div class="container">
         <div class="anim-wrap" style="transition-delay: 0.1s;">
             <h1 class="studio-title">EzWın Studıo</h1>
-            <div class="designer-tag">DESİGNED BY 𝐋𝐃✦ 𝐒𝐄𝟕𝐄𝐍𝐒𝐘𝐍𝐃𝐑𝐀𝐗𝐄</div>
+            <div class="designer-tag">DESıGNED BY 𝐋𝐃✦ 𝐒𝐄𝟕𝐄𝐍𝐒𝐘𝐍𝐃𝐑𝐀𝐗𝐄</div>
         </div>
 
         <div class="layout-grid">
             <div class="side-col anim-wrap" style="transition-delay: 0.3s;">
-                <a href="https://discord.gg/CnapcSfNq5" target="_blank" class="base-btn white-btn">JOIN THE EzWin Music</a>
-                <a href="https://discord.gg/G7s3kgtSJX" target="_blank" class="base-btn white-btn">EzWin Hesap Hizmetleri</a>
+                <a href="https://discord.gg/CnapcSfNq5" target="_blank" class="base-btn white-btn">JOıN THE EzWın Musıc</a>
+                <a href="https://discord.gg/G7s3kgtSJX" target="_blank" class="base-btn white-btn">EzWın Hesap Hızmetlerı</a>
             </div>
+
             <div class="center-col anim-wrap" style="transition-delay: 0.2s;">
-                <a href="https://www.youtube.com/@EzW%C4%B1nStud%C4%B1o" target="_blank" class="base-btn yt-btn"><i class="fa-brands fa-youtube"></i> <b>EzWın Studıo</b></a>
-                <a href="https://www.youtube.com/@EzWınMusıc" target="_blank" class="base-btn yt-btn"><i class="fa-brands fa-youtube"></i> <b>EzWın Musıc</b></a>
-                <a href="https://www.youtube.com/@EzWinYaSen" target="_blank" class="base-btn yt-btn"><i class="fa-brands fa-youtube"></i> <b>EzWın YaSen</b></a>
-                <a href="https://discord.gg/xDydNyHnUd" target="_blank" class="base-btn special-main-btn">JOIN THE EzWın Studıo</a>
+                <a href="https://www.youtube.com/@EzW%C4%B1nStud%C4%B1o" target="_blank" class="base-btn yt-btn">
+                    <i class="fa-brands fa-youtube"></i> <b>EzWın Studıo</b>
+                </a>
+                <a href="https://www.youtube.com/@EzWınMusıc" target="_blank" class="base-btn yt-btn">
+                    <i class="fa-brands fa-youtube"></i> <b>EzWın Musıc</b>
+                </a>
+                <a href="https://www.youtube.com/@EzWinYaSen" target="_blank" class="base-btn yt-btn">
+                    <i class="fa-brands fa-youtube"></i> <b>EzWın YaSen</b>
+                </a>
+                <a href="https://discord.gg/xDydNyHnUd" target="_blank" class="base-btn special-main-btn">JOıN THE EzWın Studıo</a>
             </div>
+
             <div class="side-col anim-wrap" style="transition-delay: 0.4s;">
                 <a href="https://discord.gg/jwtmt46ZPb" target="_blank" class="base-btn white-btn">EzWın UncopyLocked</a>
-                <a href="https://discord.gg/m2uDdfUEdf" target="_blank" class="base-btn white-btn">JOIN THE EzWin Cheat</a>
+                <a href="https://discord.gg/m2uDdfUEdf" target="_blank" class="base-btn white-btn">JOıN THE EzWın Cheat</a>
             </div>
         </div>
+
         <div class="anim-wrap" style="transition-delay: 0.5s;">
-            <div style="font-size: 9px; color: rgba(255,255,255,0.3); letter-spacing: 4px; margin-top: 40px;">FOUNDER: ezwinyasen</div>
+            <div class="founder-tag">FOUNDER: ezwınyasen</div>
         </div>
     </div>
 
-    <div class="powered-by">POWERED BY: EZWINSTUDIO</div>
+    <div class="powered-by">POWERED BY: EZWINSTUDıO</div>
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
         let player;
         let isMuted = false;
         let hudTimeout;
-        let lastVolume = 30;
 
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
@@ -138,7 +182,6 @@
             });
         }
 
-        // --- MERKEZİ SES KONTROLÜ (HUD + İKON GÜNCELLEME) ---
         function updateAudioUI(muteState) {
             const panelIcon = document.getElementById('panel-icon');
             const hud = document.getElementById('audio-hud');
@@ -154,8 +197,6 @@
                 hudIcon.className = "fa-solid fa-volume-high";
                 hudText.innerText = "SES AÇILDI";
             }
-
-            // Bildirimi Göster
             hud.classList.add('show');
             clearTimeout(hudTimeout);
             hudTimeout = setTimeout(() => { hud.classList.remove('show'); }, 1500);
@@ -164,47 +205,27 @@
         function toggleMute() {
             if (!player) return;
             isMuted = !isMuted;
-            if (isMuted) {
-                player.mute();
-            } else {
-                player.unMute();
-                if(player.getVolume() === 0) {
-                    player.setVolume(30);
-                    document.getElementById('vol-slider').value = 30;
-                }
-            }
+            if (isMuted) player.mute(); else player.unMute();
             updateAudioUI(isMuted);
         }
 
-        // --- SLIDER DİNLEYİCİSİ (SENKRONİZE) ---
         document.getElementById('vol-slider').addEventListener('input', (e) => {
             const val = parseInt(e.target.value);
             if (!player) return;
-
             player.setVolume(val);
-
-            if (val === 0 && !isMuted) {
-                isMuted = true;
-                player.mute();
-                updateAudioUI(true);
-            } else if (val > 0 && isMuted) {
-                isMuted = false;
-                player.unMute();
-                updateAudioUI(false);
-            }
+            if (val === 0 && !isMuted) { isMuted = true; player.mute(); updateAudioUI(true); }
+            else if (val > 0 && isMuted) { isMuted = false; player.unMute(); updateAudioUI(false); }
         });
 
         function startExperience() {
             const overlay = document.getElementById('enter-overlay');
-            overlay.style.opacity = '0';
+            overlay.classList.add('hide');
             setTimeout(() => { 
-                overlay.style.visibility = 'hidden'; 
                 document.body.classList.add('loaded');
                 if(player && typeof player.playVideo === 'function') player.playVideo();
-            }, 800);
+            }, 500);
         }
 
-        // Canvas Partiküller
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let parts = [];
