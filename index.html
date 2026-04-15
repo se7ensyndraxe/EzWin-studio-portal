@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EzWın Studıo | Official Portal</title>
+    <title>EzWın Studıo | Official</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Poppins:wght@400;700;900&display=swap');
@@ -11,22 +11,21 @@
         * { margin: 0; padding: 0; box-sizing: border-box; text-transform: uppercase; }
 
         body {
-            background-color: #0c0c0c; color: white;
+            background-color: #080808; color: white;
             font-family: 'Poppins', sans-serif;
             display: flex; justify-content: center; align-items: center;
             min-height: 100vh; overflow: hidden; position: relative;
         }
 
-        /* --- SİBER ARKA PLAN (PS + CODE) --- */
-        #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        /* --- TEMİZ ARKA PLAN (SADECE PS & CODE) --- */
+        #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: #080808; }
 
-        /* --- GİRİŞ & FLASH --- */
+        /* --- FLASH & GİRİŞ --- */
         #flash-bang { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 10000; opacity: 0; pointer-events: none; }
-        #enter-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0c0c0c; z-index: 9000; display: flex; justify-content: center; align-items: center; cursor: pointer; }
-        #enter-overlay h2 { font-size: 11px; letter-spacing: 12px; animation: glow 2s infinite; }
-        @keyframes glow { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+        #enter-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #080808; z-index: 9000; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+        #enter-overlay h2 { font-size: 11px; letter-spacing: 12px; font-weight: 400; }
 
-        /* --- FİZİKSEL DÜŞME ANIMASYONU --- */
+        /* --- FİZİKSEL DÜŞME --- */
         @keyframes dropBounce {
             0% { transform: translateY(-1000px); opacity: 0; }
             60% { transform: translateY(30px); opacity: 1; }
@@ -36,66 +35,49 @@
         .falling { opacity: 0; }
         body.loaded .falling { animation: dropBounce 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
 
-        /* --- ORİJİNAL HUD (EKRAN ORTASI) --- */
+        /* --- SES HUD (EKRAN ORTASI) --- */
         #audio-hud {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
             background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px);
-            padding: 30px 50px; border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 30px 50px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.2);
             z-index: 8000; display: flex; flex-direction: column; align-items: center; gap: 15px;
             opacity: 0; transition: 0.4s; pointer-events: none;
         }
         #audio-hud.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        #audio-hud span { font-weight: 900; letter-spacing: 2px; font-size: 14px; }
+        #audio-hud span { font-weight: 900; letter-spacing: 2px; }
 
-        /* --- MUZIK PANELİ (SOL ÜST) --- */
+        /* --- MÜZİK PANELİ (SOL ÜST) --- */
         .music-panel {
             position: absolute; top: 30px; left: 30px; z-index: 7000;
-            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px);
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(15px);
             padding: 10px 20px; border-radius: 50px; border: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex; align-items: center; gap: 18px;
+            display: flex; align-items: center; gap: 15px;
         }
-        .nav-btn, #mute-btn, #menu-btn { cursor: pointer; transition: 0.3s; color: rgba(255,255,255,0.6); }
+        .nav-btn, #mute-btn, #menu-btn { cursor: pointer; transition: 0.2s; color: rgba(255,255,255,0.6); font-size: 14px; }
         .nav-btn:hover { color: #fff; transform: scale(1.1); }
-        .vol-slider { width: 60px; height: 3px; -webkit-appearance: none; background: rgba(255,255,255,0.1); border-radius: 5px; }
-        .vol-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 10px; height: 10px; background: #fff; border-radius: 50%; cursor: pointer; }
+        .vol-slider { width: 50px; height: 3px; -webkit-appearance: none; background: rgba(255,255,255,0.1); }
+        .vol-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 10px; height: 10px; background: #fff; border-radius: 50%; }
 
-        /* --- PLAYLIST --- */
-        #playlist-menu {
-            position: absolute; top: 85px; left: 30px; width: 300px;
-            background: rgba(10,10,10,0.98); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px; padding: 15px; display: none; flex-direction: column; gap: 8px; z-index: 7001;
-        }
-        #playlist-menu.active { display: flex; }
-        .playlist-item { padding: 10px; border-radius: 6px; font-size: 10px; cursor: pointer; color: #555; display: flex; justify-content: space-between; }
-        .playlist-item.playing { background: #fff; color: #000; font-weight: 800; }
-
-        /* --- ANA KONTEYNER --- */
+        /* --- ANA PANEL VE BUTONLAR --- */
         .container { text-align: center; z-index: 500; width: 100%; max-width: 950px; padding: 20px; }
-        
-        @keyframes grad { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        .animated-gradient { background: linear-gradient(90deg, #444, #fff, #444); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: grad 4s linear infinite; }
+        h1.studio-title { font-size: 50px; font-weight: 900; letter-spacing: -2px; }
+        .designer-tag { font-size: 8px; color: rgba(255,255,255,0.3); letter-spacing: 5px; margin-bottom: 40px; }
 
-        h1.studio-title { font-size: 50px; font-weight: 900; letter-spacing: -1px; }
-        .designer-tag { font-size: 8px; color: rgba(255,255,255,0.3); letter-spacing: 5px; margin-top: 5px; margin-bottom: 40px; }
-
-        /* --- ORİJİNAL TUŞ TASARIMI --- */
-        .layout-grid { display: flex; align-items: center; gap: 15px; width: 100%; }
+        .layout-grid { display: flex; align-items: center; gap: 15px; }
         .side-col { flex: 1; display: flex; flex-direction: column; gap: 12px; }
         .center-col { flex: 1.2; display: flex; flex-direction: column; gap: 12px; }
 
-        .base-btn { height: 52px; border-radius: 10px; text-decoration: none; font-weight: 800; display: flex; align-items: center; justify-content: center; transition: 0.3s; font-size: 10px; letter-spacing: 1px; border: 1px solid rgba(255,255,255,0.15); }
+        .base-btn { height: 55px; border-radius: 10px; text-decoration: none; font-weight: 800; display: flex; align-items: center; justify-content: center; transition: 0.3s; font-size: 11px; border: 1px solid rgba(255,255,255,0.1); }
         .white-btn { background: #fff; color: #000; border: none; }
-        .white-btn:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(255,255,255,0.1); }
-        
-        .yt-btn { background: rgba(255,255,255,0.03); color: #fff; }
-        .yt-btn i { margin-right: 12px; color: #ff0000; font-size: 16px; }
-        .yt-btn:hover { background: rgba(255,255,255,0.1); }
-
-        .main-dc-btn { height: 60px; background: rgba(255,255,255,0.05); border: 1px solid #fff; font-size: 11px; }
+        .yt-btn { background: rgba(255,255,255,0.03); color: #fff; justify-content: flex-start; padding-left: 20px; }
+        .yt-btn i { margin-right: 12px; color: #ff0000; }
+        .main-dc-btn { height: 65px; border: 1px solid #fff; background: transparent; }
         .main-dc-btn:hover { background: #fff; color: #000; }
 
-        .founder-info { font-size: 8px; color: rgba(255,255,255,0.2); letter-spacing: 3px; margin-top: 40px; }
-        .powered-by { position: fixed; bottom: 30px; right: 30px; font-size: 8px; font-weight: 900; letter-spacing: 3px; }
+        #playlist-menu { position: absolute; top: 85px; left: 30px; background: #000; border: 1px solid #333; padding: 10px; display: none; flex-direction: column; width: 250px; border-radius: 10px; }
+        #playlist-menu.active { display: flex; }
+        .playlist-item { padding: 8px; font-size: 10px; cursor: pointer; color: #444; }
+        .playlist-item.playing { color: #fff; font-weight: 900; }
         #video-container { position: absolute; left: -9999px; }
     </style>
 </head>
@@ -109,7 +91,7 @@
     </div>
 
     <div id="audio-hud">
-        <i id="hud-icon" class="fa-solid fa-volume-high"></i>
+        <i id="hud-icon" class="fa-solid fa-volume-high" style="font-size: 24px;"></i>
         <span id="hud-text">SES ACIK</span>
     </div>
 
@@ -124,18 +106,16 @@
     </div>
 
     <div id="playlist-menu">
-        <div class="playlist-item playing" data-index="0" onclick="selectTrack(0)"><span>LAST CHRISTMAS // PHONK</span> <i class="fa-solid fa-music"></i></div>
-        <div class="playlist-item" data-index="1" onclick="selectTrack(1)"><span>VAR VAR // PHONK</span> <i class="fa-solid fa-music"></i></div>
-        <div class="playlist-item" data-index="2" onclick="selectTrack(2)"><span>RASPUTIN // PHONK</span> <i class="fa-solid fa-music"></i></div>
-        <div class="playlist-item" data-index="3" onclick="selectTrack(3)"><span>JUST THE TWO OF US // PHONK</span> <i class="fa-solid fa-music"></i></div>
+        <div class="playlist-item playing" data-index="0" onclick="selectTrack(0)">LAST CHRISTMAS</div>
+        <div class="playlist-item" data-index="1" onclick="selectTrack(1)">VAR VAR</div>
     </div>
 
     <div id="video-container"><div id="player"></div></div>
 
     <div class="container">
         <div class="falling" style="animation-delay: 0.1s;">
-            <h1 class="studio-title animated-gradient">EZWIN STUDIO</h1>
-            <p class="designer-tag">DESIGNED BY LD✦ SE7ENSYNDRAXE</p>
+            <h1 class="studio-title">EZWIN STUDIO</h1>
+            <p class="designer-tag">DESIGNED BY SE7ENSYNDRAXE</p>
         </div>
 
         <div class="layout-grid">
@@ -144,40 +124,34 @@
                 <a href="#" class="base-btn white-btn falling" style="animation-delay: 0.5s;">EZWIN HESAP HIZMETLERI</a>
             </div>
             <div class="center-col">
-                <a href="#" class="base-btn yt-btn falling" style="animation-delay: 0.2s;"><i class="fa-brands fa-youtube"></i> <b>EZWIN STUDIO</b></a>
-                <a href="#" class="base-btn yt-btn falling" style="animation-delay: 0.4s;"><i class="fa-brands fa-youtube"></i> <b>EZWIN MUSIC</b></a>
-                <a href="#" class="base-btn yt-btn falling" style="animation-delay: 0.6s;"><i class="fa-brands fa-youtube"></i> <b>EZWIN YASEN</b></a>
-                <a href="#" class="base-btn main-dc-btn falling" style="animation-delay: 0.4s;">JOIN THE EZWIN STUDIO</a>
+                <a href="#" class="base-btn yt-btn falling" style="animation-delay: 0.2s;"><i class="fa-brands fa-youtube"></i> EZWIN STUDIO</a>
+                <a href="#" class="base-btn yt-btn falling" style="animation-delay: 0.4s;"><i class="fa-brands fa-youtube"></i> EZWIN MUSIC</a>
+                <a href="#" class="base-btn main-dc-btn falling" style="animation-delay: 0.6s;">JOIN THE EZWIN STUDIO</a>
             </div>
             <div class="side-col">
                 <a href="#" class="base-btn white-btn falling" style="animation-delay: 0.4s;">EZWIN UNCOPYLOCKED</a>
                 <a href="#" class="base-btn white-btn falling" style="animation-delay: 0.7s;">JOIN THE EZWIN CHEAT</a>
             </div>
         </div>
-        
-        <div class="founder-info falling" style="animation-delay: 0.9s;">FOUNDER: EZWINYASEN</div>
     </div>
-
-    <div class="powered-by animated-gradient">POWERED BY: EZWINSTUDIO</div>
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        // --- ARKA PLAN MOTORU (CODE & PS) ---
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let shapes = [];
         const types = ['sq', 'tri', 'cir', 'x', 'code'];
-        const codes = ["{ }", "EZ", "WIN", "ROOT", "404", "SYS"];
+        const codes = ["{ }", "EZ", "WIN", "ROOT", "404"];
 
         function initBG() {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
             shapes = [];
-            for(let i=0; i<60; i++) {
+            for(let i=0; i<50; i++) {
                 shapes.push({
                     x: Math.random()*canvas.width, y: Math.random()*canvas.height,
-                    size: Math.random()*15+10, type: types[Math.floor(Math.random()*types.length)],
-                    speed: Math.random()*0.3+0.1, rot: Math.random()*Math.PI*2,
-                    op: Math.random()*0.2, text: codes[Math.floor(Math.random()*codes.length)]
+                    size: Math.random()*15+8, type: types[Math.floor(Math.random()*types.length)],
+                    speed: Math.random()*0.3+0.1, op: Math.random()*0.15,
+                    text: codes[Math.floor(Math.random()*codes.length)], rot: Math.random()*Math.PI
                 });
             }
         }
@@ -189,18 +163,17 @@
                 ctx.strokeStyle = `rgba(255,255,255,${s.op})`; ctx.fillStyle = `rgba(255,255,255,${s.op})`;
                 if(s.type==='sq') ctx.strokeRect(-s.size/2, -s.size/2, s.size, s.size);
                 else if(s.type==='code') { ctx.font = `${s.size}px 'Fira Code'`; ctx.fillText(s.text, 0, 0); }
-                else if(s.type==='cir') { ctx.arc(0,0,s.size/2,0,Math.PI*2); ctx.stroke(); }
-                else if(s.type==='tri') { ctx.moveTo(0,-s.size/2); ctx.lineTo(s.size/2,s.size/2); ctx.lineTo(-s.size/2,s.size/2); ctx.closePath(); ctx.stroke(); }
-                else { ctx.moveTo(-s.size/2,-s.size/2); ctx.lineTo(s.size/2,s.size/2); ctx.moveTo(s.size/2,-s.size/2); ctx.lineTo(-s.size/2,s.size/2); ctx.stroke(); }
+                else if(s.type==='cir') { ctx.beginPath(); ctx.arc(0,0,s.size/2,0,Math.PI*2); ctx.stroke(); }
+                else if(s.type==='tri') { ctx.beginPath(); ctx.moveTo(0,-s.size/2); ctx.lineTo(s.size/2,s.size/2); ctx.lineTo(-s.size/2,s.size/2); ctx.closePath(); ctx.stroke(); }
+                else { ctx.beginPath(); ctx.moveTo(-s.size/2,-s.size/2); ctx.lineTo(s.size/2,s.size/2); ctx.moveTo(s.size/2,-s.size/2); ctx.lineTo(-s.size/2,s.size/2); ctx.stroke(); }
                 ctx.restore(); s.y -= s.speed; if(s.y < -50) s.y = canvas.height+50;
             });
             requestAnimationFrame(drawBG);
         }
-        window.addEventListener('resize', initBG); initBG(); drawBG();
+        initBG(); drawBG();
 
-        // --- YOUTUBE & HUD ---
-        let player, hudT, cur = 0;
-        const tracks = ["KhqNTjbQ71A", "eCRG6UAsDgc", "x5Oag4hISgU", "gelwwYuYGn0"];
+        let player, cur = 0;
+        const tracks = ["KhqNTjbQ71A", "eCRG6UAsDgc"];
 
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', { height: '1', width: '1', videoId: tracks[0], events: {'onReady': (e) => e.target.setVolume(30)} });
@@ -211,7 +184,7 @@
             document.getElementById('enter-overlay').style.display = 'none';
             setTimeout(() => {
                 document.body.classList.add('loaded'); if(player) player.playVideo();
-                let op = 1; const f = setInterval(() => { op -= 0.05; document.getElementById('flash-bang').style.opacity = op; if(op<=0){clearInterval(f);}}, 30);
+                let op = 1; const f = setInterval(() => { op -= 0.05; document.getElementById('flash-bang').style.opacity = op; if(op<=0) clearInterval(f); }, 30);
             }, 500);
         }
 
@@ -219,24 +192,17 @@
             const h = document.getElementById('audio-hud');
             document.getElementById('hud-icon').className = "fa-solid " + icon;
             document.getElementById('hud-text').innerText = text;
-            h.classList.add('show'); clearTimeout(hudT);
-            hudT = setTimeout(() => h.classList.remove('show'), 1500);
-        }
-
-        function togglePlaylist() { document.getElementById('playlist-menu').classList.toggle('active'); }
-        function selectTrack(idx) {
-            cur = idx; player.loadVideoById(tracks[idx]);
-            showHUD("MUZIK DEGISTIRILDI", "fa-music");
-            document.querySelectorAll('.playlist-item').forEach((it, i) => it.classList.toggle('playing', i === idx));
+            h.classList.add('show'); setTimeout(() => h.classList.remove('show'), 1500);
         }
 
         function toggleMute() {
-            if (player.isMuted()) { player.unMute(); document.getElementById('panel-icon').className="fa-solid fa-volume-high"; showHUD("SES ACIK", "fa-volume-high"); }
-            else { player.mute(); document.getElementById('panel-icon').className="fa-solid fa-volume-xmark"; showHUD("SES KAPATILDI", "fa-volume-xmark"); }
+            if (player.isMuted()) { player.unMute(); showHUD("SES ACIK", "fa-volume-high"); }
+            else { player.mute(); showHUD("SES KAPATILDI", "fa-volume-xmark"); }
         }
-
-        function nextTrack() { cur = (cur + 1) % tracks.length; selectTrack(cur); }
-        function prevTrack() { cur = (cur - 1 + tracks.length) % tracks.length; selectTrack(cur); }
+        function togglePlaylist() { document.getElementById('playlist-menu').classList.toggle('active'); }
+        function selectTrack(i) { player.loadVideoById(tracks[i]); showHUD("MUZIK DEGISTI", "fa-music"); }
+        function nextTrack() { cur = (cur+1)%tracks.length; selectTrack(cur); }
+        function prevTrack() { cur = (cur-1+tracks.length)%tracks.length; selectTrack(cur); }
         document.getElementById('vol-slider').addEventListener('input', (e) => player.setVolume(e.target.value));
     </script>
 </body>
